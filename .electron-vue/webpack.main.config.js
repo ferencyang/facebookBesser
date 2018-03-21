@@ -21,6 +21,10 @@ let mainConfig = {
         test: /\.js$/,
         use: 'babel-loader',
         exclude: /node_modules/
+    },
+      {
+          test: /\.less$/,
+          loader: "style-loader!css-loader!less-loader"
       },
       {
         test: /\.node$/,

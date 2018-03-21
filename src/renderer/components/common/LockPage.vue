@@ -53,7 +53,10 @@
 }
 
 .ivu-menu-dark {
-    background: #425FB4;
+    background: -webkit-linear-gradient(left, #8576d8 , #56e0f6); /* Safari 5.1 - 6.0 */
+    background: -o-linear-gradient(right, #8576d8 , #56e0f6); /* Opera 11.1 - 12.0 */
+    background: -moz-linear-gradient(right, #8576d8 , #56e0f6); /* Firefox 3.6 - 15 */
+    background: linear-gradient(to right, #8576d8 , #56e0f6); /* 标准的语法 */
     margin: -1px;
 }
 

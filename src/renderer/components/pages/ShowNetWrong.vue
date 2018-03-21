@@ -43,6 +43,17 @@
     width: 100%;
 }
 
+#app .ivu-btn-primary{
+    background: -webkit-linear-gradient(#56e0f6, #77c4f6); /* Safari 5.1 - 6.0 */
+
+    background: -o-linear-gradient(#56e0f6, #77c4f6); /* Opera 11.1 - 12.0 */
+
+    background: -moz-linear-gradient(#56e0f6, #77c4f6); /* Firefox 3.6 - 15 */
+
+    background: linear-gradient(#56e0f6, #77c4f6); /* 标准的语法 */
+    color: #fff;
+}
+
 .ivu-checkbox-group-item {
     border-bottom: 1px solid #d9d9d9;
 }
@@ -53,7 +64,13 @@
 }
 
 .ivu-menu-dark {
-    background: #425FB4;
+    background: -webkit-linear-gradient(left, #8576d8 , #56e0f6); /* Safari 5.1 - 6.0 */
+
+    background: -o-linear-gradient(right, #8576d8 , #56e0f6); /* Opera 11.1 - 12.0 */
+
+    background: -moz-linear-gradient(right, #8576d8 , #56e0f6); /* Firefox 3.6 - 15 */
+
+    background: linear-gradient(to right, #8576d8 , #56e0f6); /* 标准的语法 */
     margin: -1px;
 }
 

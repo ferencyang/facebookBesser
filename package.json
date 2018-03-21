@@ -40,12 +40,8 @@
         }
       ]
     },
-    "mac": {
-      
-    },
-    "win": {
-
-    },
+    "mac": {},
+    "win": {},
     "linux": {
       "icon": "build/icons"
     }
@@ -58,6 +54,8 @@
     "iview": "^2.9.2",
     "js-base64": "^2.4.3",
     "js-sha256": "^0.9.0",
+    "less": "^3.0.1",
+    "less-loader": "^4.1.0",
     "vue": "^2.3.3",
     "vue-axios": "^2.0.2",
     "vue-echarts-v3": "^1.0.19",

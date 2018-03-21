@@ -28,8 +28,14 @@
 }
 
 .ivu-menu-dark {
-  background: #425FB4;
-  margin: -1px;
+  background: -webkit-linear-gradient(left, #8576d8 , #56e0f6); /* Safari 5.1 - 6.0 */
+
+  background: -o-linear-gradient(right, #8576d8 , #56e0f6); /* Opera 11.1 - 12.0 */
+
+  background: -moz-linear-gradient(right, #8576d8 , #56e0f6); /* Firefox 3.6 - 15 */
+
+  background: linear-gradient(to right, #8576d8 , #56e0f6); /* 标准的语法 */
+    margin: -1px;
 }
 
 .ivu-menu-horizontal {
@@ -102,52 +108,55 @@
 li {
   -webkit-app-region: no-drag;
 }
+#leftMenu a{
+  color: #7894e0
+}
 </style>
 
 <template>
-<div class="layout">
+<div  class="layout">
 
-  <div class="drag-area">
+  <div  class="drag-area">
 
     <Menu mode="horizontal" theme="dark" active-name="1" @on-select="tapMenu">
       <div class="layout-logo">
-        <img src="../../assets/logo.png">
+        <img style="" src="../../assets/logo.png">
       </div>
       <div class="layout-nav">
         <MenuItem name="1">
-        <img src="../../assets/m11.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '1'">
+        <img src="../../assets/menu01.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '1'">
         <img src="../../assets/m01.png" style="width:40px;height:40px;margin-top:12px;" v-else>
         <!-- <Icon type="camera" size="50"></Icon> -->
         <p>{{ $t("message.post") }}</p>
         </MenuItem>
         <MenuItem name="2">
-        <img src="../../assets/m22.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '2'">
+        <img src="../../assets/menu02.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '2'">
         <img src="../../assets/m02.png" style="width:40px;height:40px;margin-top:12px;" v-else>
         <p>{{ $t("message.addfriends") }}</p>
         </MenuItem>
         <MenuItem name="3">
-        <img src="../../assets/m33.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '3'">
+        <img src="../../assets/menu03.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '3'">
         <img src="../../assets/m03.png" style="width:40px;height:40px;margin-top:12px;" v-else>
         <p>{{ $t("message.reply") }}</p>
         </MenuItem>
         <MenuItem name="4">
-        <img src="../../assets/m44.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '4'">
+        <img src="../../assets/menu04.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '4'">
         <img src="../../assets/m04.png" style="width:40px;height:40px;margin-top:12px;" v-else>
         <p>{{ $t("message.robot") }}</p>
         </MenuItem>
         <MenuItem name="5">
-        <img src="../../assets/m55.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '5'">
+        <img src="../../assets/menu05.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '5'">
         <img src="../../assets/m05.png" style="width:40px;height:40px;margin-top:12px;" v-else>
         <p>{{ $t("message.taskdetail") }}</p>
         </MenuItem>
         <MenuItem name="6">
-        <img src="../../assets/m77.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '6'">
-        <img src="../../assets/m07.png" style="width:40px;height:40px;margin-top:12px;" v-else>
+        <img src="../../assets/menu06.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '6'">
+        <img src="../../assets/m06.png" style="width:40px;height:40px;margin-top:12px;" v-else>
         <p>{{ $t("message.analysis") }}</p>
         </MenuItem>
         <MenuItem name="7">
-        <img src="../../assets/m66.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '7'">
-        <img src="../../assets/m06.png" style="width:40px;height:40px;margin-top:12px;" v-else>
+        <img src="../../assets/menu07.png" style="width:40px;height:40px;margin-top:12px;" v-if="menuVal === '7'">
+        <img src="../../assets/m07.png" style="width:40px;height:40px;margin-top:12px;" v-else>
         <p>{{ $t("message.settings") }}</p>
         </MenuItem>
       </div>
@@ -196,8 +205,8 @@ li {
 
   </div>
 
-  <Row>
-    <Col span="6" style="padding-right:15px;overflow:auto;height:600px;">
+  <Row >
+    <Col id="leftMenu" span="6" style="padding-right:15px;overflow:auto;height:600px;">
     <!-- left -->
     <!-- 账号组部分 -->
     <div style="margin-top:20px;margin-left:15px;margin-bottom:10px;">
@@ -210,7 +219,7 @@ li {
 
       <div v-for="(item, idx) in devicesGroupAll" :key="idx">
         <Checkbox :indeterminate="false" :value="checkAllGroupOne === idx" @click.prevent.native="handleCheckGroupOne(idx)">
-          <Icon type="person-stalker" color="#2d8cf0" style="padding-left:15px;padding-right:8px;"></Icon>{{item.name}}
+          <Icon type="person-stalker" color="#8576d8" style="padding-left:15px;padding-right:8px;"></Icon>{{item.name}}
         </Checkbox>
       </div>
 
@@ -262,18 +271,6 @@ li {
     <!-- main end -->
     </Col>
   </Row>
-  <!-- <div class="layout-content"> -->
-
-  <!-- main -->
-  <!-- main end -->
-
-  <!-- <div class="layout-content-main">
-              <router-view/>
-            </div> -->
-  <!-- </div> -->
-  <!-- <div class="layout-copy">
-          Copyright &copy; 2017 百森云控出品
-        </div> -->
 
   <!-- model -->
   <Modal v-model="modalAddGroup" :title="$t('message.newGroup')" :ok-text="$t('message.confirm')" :cancel-text="$t('message.cancel')" @on-ok="tapAddGroupOk" @on-cancel="tapAddGroupCancel">
