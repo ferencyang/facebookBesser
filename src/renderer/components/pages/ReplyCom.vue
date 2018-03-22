@@ -1,14 +1,4 @@
 <style>
-  .ivu-btn-primary{
-    background: -webkit-linear-gradient(#56e0f6, #77c4f6); /* Safari 5.1 - 6.0 */
-
-    background: -o-linear-gradient(#56e0f6, #77c4f6); /* Opera 11.1 - 12.0 */
-
-    background: -moz-linear-gradient(#56e0f6, #77c4f6); /* Firefox 3.6 - 15 */
-
-    background: linear-gradient(#56e0f6, #77c4f6); /* 标准的语法 */
-    color: #fff;
-  }
 </style>
 
 <template>
@@ -745,26 +735,6 @@ export default {
           // this.$Message.error('Fail!');
         }
       })
-
-      // --- 待删除代码
-      //   if (this.addReplayComTitle === '') {
-      //     this.$Message.warning('请输入模板名称')
-      //   }
-      //   this.$Message.success('模板添加')
-      // let addReplayComOneVal = this.addReplayComOne;
-      // if (addReplayComOneVal !== '') {
-      //     let addReplayComOneValJson = {
-      //         name: addReplayComOneVal
-      //     };
-      //     this.replayComList.push(addReplayComOneValJson);
-      //     let localstroage = window.localStorage;
-      //     let addReplayComOneString = JSON.stringify(this.replayComList);
-      //     let mobileNow = localstroage.getItem('mobile');
-      //     let nameKeyNow = 'replayComList' + mobileNow;
-      //     localstroage.setItem(nameKeyNow, addReplayComOneString);
-      //     this.addReplayComOne = '';
-      // }
-      // --- 待删除代码 end
     },
     handleReplayGroupSubmit(formName) {
       // 模板组编辑、添加提交
@@ -775,7 +745,6 @@ export default {
           let postUrl = this.modalReplayGroupEditing
             ? 'besser/fbcc/models/modelgroupEdit'
             : 'besser/fbcc/models/modelgroupAdd'
-            console.log(pos)
           let postData = this.modalReplayGroupEditing
             ? {
                 //编辑请求参数
@@ -789,7 +758,7 @@ export default {
                 token: window.localStorage.getItem('token'),
                 name: this.replayGroupData.name,
                 desc: this.replayGroupData.desc
-              }
+              };
           this.axios({
             url: postUrl,
             method: 'post',
@@ -811,9 +780,9 @@ export default {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             }
-          })
-            .then(res => {
+          }).then(res => {
               if (res.data.code === 200) {
+                  console.log(1123112312312313000)
                 this.$Message.success('操作成功')
               } else {
                 this.$Message.warning('操作失败', res)
@@ -823,17 +792,18 @@ export default {
               this.modalReplayGroupLoading = false
               this.modalReplayGroupEditing = false
               this.modalReplayGroupEditingID = ''
-            })
-            .catch(err => {
+            }).catch(err => {
               console.error('操作异常', err)
               this.$Message.error('操作异常')
               this.modalReplayGroup = false
               this.modalReplayGroupLoading = false
               this.modalReplayGroupEditing = false
               this.modalReplayGroupEditingID = ''
+                console.log(1123112312312313)
             })
         } else {
           //
+            console.log(11231123123123131231)
           this.modalReplayGroupLoading = false
           this.modalReplayGroupEditing = false
           this.modalReplayGroupEditingID = ''

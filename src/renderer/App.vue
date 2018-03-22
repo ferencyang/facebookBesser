@@ -173,16 +173,27 @@ export default {
 <style>
 
 #app .ivu-btn-primary,#app .ivu-switch-checked{
-background: -webkit-linear-gradient(#56e0f6, #77c4f6); /* Safari 5.1 - 6.0 */
+  background: -webkit-linear-gradient(#56e0f6, #77c4f6); /* Safari 5.1 - 6.0 */
 
-background: -o-linear-gradient(#56e0f6, #77c4f6); /* Opera 11.1 - 12.0 */
+  background: -o-linear-gradient(#56e0f6, #77c4f6); /* Opera 11.1 - 12.0 */
 
-background: -moz-linear-gradient(#56e0f6, #77c4f6); /* Firefox 3.6 - 15 */
+  background: -moz-linear-gradient(#56e0f6, #77c4f6); /* Firefox 3.6 - 15 */
 
-background: linear-gradient(#56e0f6, #77c4f6); /* 标准的语法 */
-color: #fff;
+  background: linear-gradient(#56e0f6, #77c4f6); /* 标准的语法 */
+  color: #fff;
+}
+.ivu-modal .ivu-btn-primary{
+  background: -webkit-linear-gradient(#56e0f6, #77c4f6); /* Safari 5.1 - 6.0 */
+
+  background: -o-linear-gradient(#56e0f6, #77c4f6); /* Opera 11.1 - 12.0 */
+
+  background: -moz-linear-gradient(#56e0f6, #77c4f6); /* Firefox 3.6 - 15 */
+
+  background: linear-gradient(#56e0f6, #77c4f6); /* 标准的语法 */
+  color: #fff;
 }
 .layout {
+  overflow: hidden;
   background: #ffffff;
   width: 100%;
   height: 100%;
@@ -191,8 +202,8 @@ color: #fff;
 .demo-spin-icon-load {
   animation: ani-demo-spin 1s linear infinite;
 }
-  #leftMenu .ivu-checkbox-checked .ivu-checkbox-inner{
+#leftMenu .ivu-checkbox-checked .ivu-checkbox-inner,#leftMenu .ivu-checkbox-indeterminate  .ivu-checkbox-inner{
     border-color: #8576d8;
     background-color: #8576d8;
-  }
+}
 </style>
