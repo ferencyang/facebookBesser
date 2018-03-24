@@ -67,6 +67,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: 16px;
+        color: #fff;
     }
 
     .homepageIcon {
@@ -297,33 +298,39 @@
                                  v-bind:style="{background:color[index]}">
                                 <span>{{item}}</span>
                                 <span v-on:click="homePageEidt(1,item)" class="homepageIcon" v-show="active === index">
-                                     <Icon type="close" color="red"></Icon>
+                                     <Icon type="close" color="#fff"></Icon>
                                 </span>
                             </div>
                             </Col>
                             <Col span="8" style="border-radius: 6px;height: 60px" v-if="homepages.length <6">
                             <div @click="addHomePageBtn" class="homepageName" style="background: #fff">
                                 <Icon type="plus-circled" style="color:#00D01F"></Icon>
-                                <span>添加主页</span>
+                                <span style="color: #1c2438">添加主页</span>
                             </div>
                             </Col>
                         </Row>
                     </div>
 
-                    <div style="position:relative;top: 40px;text-align: center">
-                        <div>粉丝量</div>
-                    </div>
-                    <div>
-                        <div style="width: 100%; height:300px;">
-                            <IEcharts :option="fansNum"></IEcharts>
-                        </div>
-                    </div>
-                    <div style="position:relative;top: 40px;text-align: center">
+
+                    <Tabs v-model="homePagePaneVal" size="small" @on-click="homePagePane">
+                        <TabPane label="粉丝数" name="tab1"></TabPane>
+                        <TabPane label="活跃度" name="tab2"></TabPane>
+                        <TabPane label="帖子数" name="tab3"></TabPane>
+                        <TabPane label="评论数" name="tab4"></TabPane>
+                        <TabPane label="点赞数" name="tab5"></TabPane>
+                        <TabPane label="分享数" name="tab6"></TabPane>
+                        <TabPane label="浏览数" name="tab7"></TabPane>
+                        <ButtonGroup slot="extra" size="small">
+                            <Button :type="dateWeekVal" @click.native="tapDateWeek">7天</Button>
+                            <Button :type="dateMonthVal" @click.native="tapDateMonth">30天</Button>
+                        </ButtonGroup>
+                    </Tabs>
+                    <div style="position:relative;text-align: center">
                         <div>主页活跃度</div>
                     </div>
                     <div>
                         <div style="width: 100%; height:300px;">
-                            <IEcharts :option="homepagesActiveNum"></IEcharts>
+                            <IEcharts :option="homepageDataChange"></IEcharts>
                         </div>
                     </div>
                 </div>
@@ -415,6 +422,8 @@
         data: () => ({
             tabPaneVal: 'tab1',
             analysisTapPaneVal: 'tab1',
+            homePagePaneVal: 'tab1',
+            homepageTypeOption: "自己主页",
             devicesListAll: [],
             deviceListAllOnline: [],
             deviceListAllOffline: [],
@@ -528,7 +537,7 @@
                     data: []
                 }]
             },
-            fansNum: {
+            homepageDataChange: {
                 title: {
                     text: '',
                     padding: [3, 1],
@@ -553,55 +562,14 @@
                     bottom: '3%',
                     containLabel: true
                 },
-                xAxis: [{
+                xAxis: {
                     type: 'category',
-                    data: [],
                     boundaryGap: false,
-                    axisTick: {
-                        alignWithLabel: true
-                    }
-                }],
-                yAxis: [{
+                    data: []
+                },
+                yAxis: {
                     type: 'value'
-                }],
-                series: []
-            },
-            homepagesActiveNum: {
-                title: {
-                    text: '',
-                    padding: [3, 1],
-                    textStyle: {
-                        fontSize: 14
-                    }
                 },
-                /*color: ['#2699FF'],*/
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
-                        type: 'cross',
-                        label: {
-                            backgroundColor: '#6a7985'
-                        }
-                    }
-                },
-                color: ['#59cb59', '#08c4b3', '#3996e3', '#9180f3', '#db61da', '#db61da'],
-                grid: {
-                    left: '0',
-                    right: '20px    ',
-                    bottom: '3%',
-                    containLabel: true
-                },
-                xAxis: [{
-                    type: 'category',
-                    data: [],
-                    boundaryGap: false,
-                    axisTick: {
-                        alignWithLabel: true
-                    }
-                }],
-                yAxis: [{
-                    type: 'value'
-                }],
                 series: [{
                     name: '操作次数',
                     type: 'line',
@@ -620,7 +588,6 @@
             addHomeData: {
                 name: "",
             },
-            allHomepagesActive: [],
             loading: false, //模板组执行编辑状态
             ruleValidate: {
                 name: [
@@ -632,10 +599,18 @@
                 ]
             },
             color: ['#59cb59', '#08c4b3', '#3996e3', '#9180f3', '#db61da', '#ef58bb'],
-            homepageTypeOption: "自己主页",
             myhomepage: [],
             viehomepage: [],
             active: "",
+            homepage:{
+                'activenum':[],
+                'concerns':[],
+                'totalposts':[],
+                'comment':[],
+                'praise':[],
+                'share':[],
+                'visits':[]
+            }
         }),
         mounted() {
             this.getDevice();
@@ -653,7 +628,6 @@
                 let devicesListAllLocal = localstroage.getItem('devicesListAll');
                 this.devicesListAll = devicesListAllLocal.split(",");
                 this.deviceOneVal = this.devicesListAll[0];
-                console.log('设备数组：', this.devicesListAll);
 
                 let deviceListAllOnline = localstroage.getItem('deviceListAllOnline').split(",");
                 let deviceListAllOffline = localstroage.getItem('deviceListAllOffline').split(",");
@@ -755,33 +729,31 @@
                     });
             },
             tapTabPane(val) {
-                console.log('点击选择项：', val)
-                this.tabPaneVal = val;
                 this.getTasksDailyCount();
             },
             analysisTapPane(val) {
-                console.log('点击选择项：', val)
                 this.analysisTapPaneVal = val;
             },
             tapDeviceMenu(val) {
-                // console.log('右上角菜单:',val)
                 this.deviceOneVal = val;
             },
             tapDateWeek() {
-
                 if (this.dateWeekVal !== 'primary') {
                     this.dateWeekVal = 'primary';
                     this.dateMonthVal = 'ghost';
-                    this.getTasksDailyCount();
+                    this.analysisTapPaneVal == "tab1"
+                        ? this.getTasksDailyCount()
+                        : this.homePagePane.apply(this)
                 }
 
             },
             tapDateMonth() {
-
                 if (this.dateMonthVal !== 'primary') {
                     this.dateWeekVal = 'ghost';
                     this.dateMonthVal = 'primary';
-                    this.getTasksDailyCount();
+                    this.analysisTapPaneVal == "tab1"
+                        ? this.getTasksDailyCount()
+                        : this.homePagePane.apply(this)
                 }
 
             },
@@ -797,15 +769,12 @@
                         }
                     }
                 }
-                console.log('选择的在线设备是1：', imei)
                 var imeiNew = [];
                 for (let i = 0, l = imei.length; i < l; i++) {
                     for (let j = i + 1; j < l; j++)
                         if (imei[i] === imei[j]) j = ++i;
                     imeiNew.push(imei[i]);
                 }
-
-                console.log('选择的在线设备是2：', imeiNew)
                 return imeiNew;
             },
             getImeiFriend(value) {
@@ -838,25 +807,20 @@
                             this.dayrate = Number(response.data.data[0].dayrate);
                             this.weekrate = Number(response.data.data[0].weekrate);
                             this.dayadd = Number(response.data.data[0].dayadd);
-
-                            function initWeekArray(arr) {
-                                if (!arr.includes(0)) {
-                                    return arr.reverse();
+                            function initWeekArray() {
+                                let a = response.data.data[0].weekarray.map(function (v) {
+                                    return parseInt(v)
+                                })
+                                if(!a.includes(0)){
+                                    return a.reverse();
                                 }
-                                for (var i = 5; i > -1; i++) {
-                                    arr[i] = !arr[i] ? arr[i + 1] : arr[i];
+                                for(let i =5;i>-1;i--){
+                                    a[i] = a[i] == 0 ? a[i+1]:0;
                                 }
-                                return arr.reverse();
+                                return a.reverse()
                             }
-
-                            this.friendTotalChange.series[0].data = initWeekArray(response.data.data[0].weekarray)
-                            let weekDateArray = [];
-                            let date = new Date()
-                            for (let i = 0; i < 7; i++) {
-                                weekDateArray.push(date.toLocaleDateString().slice(5));
-                                date.setDate(date.getDate() - 1);
-                            }
-                            this.friendTotalChange.xAxis[0].data = weekDateArray.reverse();
+                            this.friendTotalChange.series[0].data = initWeekArray()
+                            this.friendTotalChange.xAxis[0].data = this.getlastDaysDate(7);
                         }
 
                     }, response => {
@@ -1035,7 +999,6 @@
                 })
                     .then(response => {
                         if (response.data.code === 200) {
-                            console.log(response.data.data[0])
                             this.myhomepage = response.data.data[0].myhomepage;
                             this.viehomepage = response.data.data[0].viehomepage;
                             this.homepages = response.data.data[0].myhomepage.concat(response.data.data[0].viehomepage);
@@ -1045,9 +1008,16 @@
                     });
             },
             getAllHomePagesInfo() {
+                let self = this;
                 let localstroage = window.localStorage;
                 let token = localstroage.getItem('token');
-                this.allHomepagesActive = [];
+                self.homepage.activenum = [];
+                self.homepage.concerns = [];
+                self.homepage.totalposts = [];
+                self.homepage.comment = [];
+                self.homepage.praise = [];
+                self.homepage.share = [];
+                self.homepage.visits = [];
                 for (let i = 0; i < this.homepages.length; i++) {
                     let homepage = this.homepages[i];
                     this.axios({
@@ -1070,50 +1040,102 @@
                         }
                     }).then(response => {
                         if (response.data.code === 200) {
-                            this.fansNum.series[i] = {
+                            this.homepageDataChange.series[i] = {
                                 name: '',
                                 type: 'line',
                                 barWidth: '60%',
                                 data: []
                             };
-                            this.homepagesActiveNum.series[i] = {
-                                name: '',
-                                type: 'line',
-                                barWidth: '60%',
-                                data: []
-                            };
-                            this.fansNum.xAxis[0].data = [];
-                            this.homepagesActiveNum.xAxis[0].data = [];
+                            let days = this.dateWeekVal !== 'primary' ? 30 : 7
+                            let dayArr = this.getlastDaysDate(days);
+                            self.homepageDataChange.xAxis.data = dayArr;
                             let homepageName = response.data.data[0] && response.data.data[0].homepage
                             if (homepageName) {
-                                this.fansNum.series[i].name = this.fansNum.series[i].name = response.data.data[0].name
-                                var self = this;
-                                self.fansNum.series[i].name = response.data.data[0].homepage
-                                self.homepagesActiveNum.series[i].name = response.data.data[0].homepage
-                                response.data.data.forEach(function (item) {
-                                    self.fansNum.series[i].data.push(item.concerns)
-                                    self.fansNum.xAxis[0].data.push(item.datetime.slice(5))
-                                    self.homepagesActiveNum.series[i].data.push(item.activenum)
-                                    self.homepagesActiveNum.xAxis[0].data = self.fansNum.xAxis[0].data
-                                })
+                                self.homepage.activenum[i] = [];
+                                self.homepage.concerns[i] = [];
+                                self.homepage.totalposts[i] = [];
+                                self.homepage.comment[i] = [];
+                                self.homepage.praise[i] = [];
+                                self.homepage.share[i] = [];
+                                self.homepage.visits[i] = [];
+                                self.homepageDataChange.series[i].name = response.data.data[0].homepage
+                                response.data.data.forEach(function (item,index) {
+                                    self.homepage.concerns[i].push(item.concerns);
+                                    self.homepage.activenum[i].push(item.activenum);
+                                    self.homepage.totalposts[i].push(item.totalposts);
+                                    self.homepage.comment[i].push(item.comment);
+                                    self.homepage.praise[i].push(item.praise);
+                                    self.homepage.share[i].push(item.share);
+                                    self.homepage.visits[i].push(item.visits);
+                                    if(i == (self.homepages.length -1 )&& index === response.data.data.length-1){
+                                        self.homePagePane()
+                                    }
+                                });
                             }
                         }
-                        ;
-
                     }, response => {
                         this.$Message.error(this.$t("message.tipWrong"));
                     });
-                }
-            },
-            delHomeBtn() {
-
+                };
             },
             delBtnShow(index) {
                 this.active = index;
             },
             delBtnHide(index) {
                 this.active = "";
+            },
+            getlastDaysDate(d) {
+                let dateArray = [];
+                let date = new Date();
+                for (let i = 0; i < d; i++) {
+                    dateArray.push(date.toLocaleDateString().slice(5));
+                    date.setDate(date.getDate() - 1);
+                }
+                return dateArray.reverse()
+            },
+            homePagePane() {
+                let self = this;
+                let days = this.dateWeekVal !== 'primary' ? 30 : 7;
+                let dayArr = this.getlastDaysDate(days);
+                self.homepageDataChange.xAxis.data = dayArr;
+                if(self.homePagePaneVal === "tab1" || !self.homePagePaneVal){
+                    self.homepage.concerns.forEach(function (item,index) {
+                        self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
+                    });
+                }
+                if(self.homePagePaneVal === "tab2"){
+                    self.homepage.activenum.forEach(function (item,index) {
+                        self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
+                    });
+                }
+                if(self.homePagePaneVal === "tab3"){
+                    self.homepage.totalposts.forEach(function (item,index) {
+                        self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
+                    });
+                }else if(self.homePagePaneVal === "tab4"){
+                    self.homepage.comment.forEach(function (item,index) {
+                        self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
+                    });
+                }else if(self.homePagePaneVal === "tab5"){
+                    self.homepage.praise.forEach(function (item,index) {
+                        self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
+                    });
+                }else if(self.homePagePaneVal === "tab6"){
+                    self.homepage.share.forEach(function (item,index) {
+                        self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
+                    });
+                }else if(self.homePagePaneVal == "tab7"){
+                    self.homepage.visits.forEach(function (item,index) {
+                        self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
+                    });
+                }
+            },
+            initDataArray(arr) {
+                arr = arr.map(function(v){return parseInt(v)});
+                arr = arr.concat(new Array(30).fill(0)).slice(0,30);
+                return arr.reverse();
             }
+
         },
         watch: {
             homepages(newVal, oldVal) {

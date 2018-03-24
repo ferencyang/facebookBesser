@@ -149,9 +149,6 @@
         <FormItem :label="$t('message.replayAddComContent')" prop="content">
           <Input v-model="replayComData.content" type="textarea" :placeholder="$t('message.replayAddPlaceholderContent')"></Input>
         </FormItem>
-        <FormItem :label="$t('message.replayAddComDesc')" prop="desc">
-          <Input v-model="replayComData.desc" type="textarea" :placeholder="$t('message.replayAddPlaceholderDesc')"></Input>
-        </FormItem>
         <FormItem :label="$t('message.replayAddComGroupID')" prop="groupID">
           <Select v-model="replayComData.groupID" :placeholder="$t('message.replayAddPlaceholderGroupID')" multiple>
             <Option v-for="item in replayGroupList" :value="item.id" :key="item.id">{{ item.name }}</Option>
