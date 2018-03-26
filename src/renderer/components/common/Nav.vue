@@ -299,14 +299,10 @@ li {
 
   <!-- model -->
   <Modal v-model="modalOperate" :title="$t('message.manageOnlineAccount')" :ok-text="$t('message.confirm')" :cancel-text="$t('message.cancel')" @on-cancel="tapAddGroupCancel">
-    <div v-for="(item, idx) in devicesListAll" :key="idx">
-      <p v-if="item.isOnline">
-        <Icon type="pause" color="#ff9900" style="padding-left:15px;padding-right:8px;width:30px;" v-if="item.paused"></Icon>
-        <Icon type="record" color="#19be6b" style="padding-left:15px;padding-right:8px;width:30px;" v-else></Icon>
-        <span>{{item.imei}}</span>
-        <a v-if="item.paused" @click="tapOPeratePlayOne(item.imei)" style="padding-left:20px;color:#19be6b">{{$t('message.play')}}<Icon type="play" style="padding-left:5px;"></Icon></a>
-        <a v-else @click="tapOPeratePauseOne(item.imei)" style="padding-left:20px;color:#ff9900">{{$t('message.hold')}}<Icon type="pause" style="padding-left:5px;"></Icon></a>
-      </p>
+    <Table border :columns="columns4" :data="this.devicesListAllTable" @on-selection-change="getSelectionData" ></Table>
+    <div slot="footer">
+      <Button @click="modalOperate = false">取消</Button>
+      <Button type="primary" :loading=false  @click="tapSwitchGroupEdit()">切换选中设备</Button>
     </div>
   </Modal>
   <!-- model end -->
@@ -351,7 +347,47 @@ export default {
       feedBackVal: '',
       langVal: 'CN',
       langValName: '简体中文',
-      menuVal: '1'
+      menuVal: '1',
+      columns4:[ {
+          type: 'selection',
+          width: 60,
+          align: 'center'
+          },
+          {
+              title: '在线设备',
+              key: 'imei'
+          }/*,
+          {
+              title: '操作',
+              key: 'action',
+              width: 150,
+              align: 'center',
+              render: (h, params) => {
+                  return h('div', [
+                      h(
+                          'Button',
+                          {
+                              props: {
+                                  type: 'primary',
+                                  size: 'small'
+                              },
+                              style: {
+                                  marginLeft: '5px'
+                              },
+                              on: {
+                                  click: () => {
+                                      this.tapSwitchGroupEdit(params)
+                                  }
+                              }
+                          },
+                          "切换下一个账号"
+                      )
+                  ])
+              }
+          }*/
+      ],
+      devicesListAllTable:[],
+      selectedData:[]
     }
   },
   mounted() {
@@ -681,7 +717,15 @@ export default {
       } else {
 
         this.modalOperate = true;
-
+        this.devicesListAllTable = []
+        for(let i=0;i<this.devicesListAll.length;i++){
+            if(this.devicesListAll[i].isOnline){
+                let data = {
+                    imei:this.devicesListAll[i].imei
+                };
+                this.devicesListAllTable.push(data)
+            }
+        }
       }
 
     },
@@ -1926,6 +1970,46 @@ export default {
       //console.log('===关闭窗口===');
       ipcRenderer.send('surfbird:window:close', true);
     },
+    tapSwitchGroupEdit(params){
+          let imei = [];
+          imei = params ? params.imei:this.selectedData
+          if(!imei.length){
+              this.$Message.error('请选择操作设备');
+              return;
+          }
+          let token = window.localStorage.getItem("token");
+          let batchId = (new Date()).valueOf().toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
+          let mainId = (new Date()).valueOf().toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
+          let tasks = [{
+              data: "",
+              batchId: batchId,
+              type: 120,
+          }]
+          let body = {
+              token: token,
+              mainId: mainId,
+              delaySecond: 0,
+              category: 0,
+              imei: imei,
+              tasks: tasks
+          }
+
+          let bodyStr = JSON.stringify(body)
+          this.$socket.emit("messageholder", {
+              sign: 1,
+              type: 33,
+              status: 0,
+              body: bodyStr
+          });
+          this.$Message.info('已提交切换账号请求');
+          this.modalOperate = false;
+    },
+    getSelectionData(val) {
+        this.selectedData = [];
+        for(let i=0;i<val.length;i++){
+            this.selectedData.push(val[i].imei);
+        }
+    }
   }, //methods
   sockets: {
     reconnect: function(val) {

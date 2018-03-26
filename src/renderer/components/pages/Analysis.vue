@@ -315,11 +315,11 @@
                     <Tabs v-model="homePagePaneVal" size="small" @on-click="homePagePane">
                         <TabPane label="粉丝数" name="tab1"></TabPane>
                         <TabPane label="活跃度" name="tab2"></TabPane>
-                        <TabPane label="帖子数" name="tab3"></TabPane>
+                        <TabPane label="帖子数" name="tab3"></TabPane><!--
                         <TabPane label="评论数" name="tab4"></TabPane>
                         <TabPane label="点赞数" name="tab5"></TabPane>
                         <TabPane label="分享数" name="tab6"></TabPane>
-                        <TabPane label="浏览数" name="tab7"></TabPane>
+                        <TabPane label="浏览数" name="tab7"></TabPane>-->
                         <ButtonGroup slot="extra" size="small">
                             <Button :type="dateWeekVal" @click.native="tapDateWeek">7天</Button>
                             <Button :type="dateMonthVal" @click.native="tapDateMonth">30天</Button>
@@ -336,7 +336,7 @@
                 </div>
             </TabPane>
         </Tabs>
-        <!-- 模板组添加和编辑 -->
+        <!-- 主页添加 -->
         <Modal v-model="modalAddHome" :title="'添加主页'">
             <Form ref="addHomePageFormValidate" :model="addHomeData" label-position="right" :label-width="80"
                   :rules="ruleValidate">
@@ -346,16 +346,6 @@
                         <Radio label="自己主页"></Radio>
                         <Radio label="同行主页"></Radio>
                     </RadioGroup>
-                </FormItem>
-            </Form>
-            <div slot="footer">
-                <Button @click="modalAddHome = false">取消</Button>
-                <Button type="primary" :loading="loading" @click="homePageEidt(0)">{{$t('message.confirm')}}</Button>
-            </div>
-        </Modal>
-        <Modal v-model="modaldelHome" :title="'主页管理'">
-            <Form label-position="right" :label-width="80">
-                <FormItem :label="'主页名称'">
                 </FormItem>
             </Form>
             <div slot="footer">

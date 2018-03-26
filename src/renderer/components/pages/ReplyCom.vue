@@ -80,8 +80,13 @@
           </span>
         </Radio>
       </RadioGroup>
+      <div style="float: right">
+        <Select  filterable  :placeholder="'请选择模板类别'" @on-change="getReplayComList">
+          <Option v-for="item in selectreplayGroupList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+        </Select>
+      </div>
       <!-- table -->
-      <Table highlight-row height="400" ref="currentRowTable" @on-selection-change="tapChoose" :columns="columns3" :data="replayComList"></Table>
+      <Table highlight-row height="400"  @on-selection-change="tapChoose" :columns="columns3" :data="replayComList"></Table>
       <!-- table end -->
       <p style="padding-top:8px;">
         <label style="color:#888888;font-size:12px;">
@@ -89,7 +94,7 @@
         </label>
         <label style="float:right">
           <a @click="modalReplayGroupList = true" style="margin-left:10px;">
-            <Icon type="navicon" style="padding-right:5px;"></Icon>模板组管理
+            <Icon type="navicon" style="padding-right:5px;"></Icon>分类管理
           </a>
           <a @click="tapAddReplayCom" style="margin-left:10px;">
             <Icon type="android-add" style="padding-right:5px;"></Icon>{{ $t("message.replayAddText") }}
@@ -130,27 +135,19 @@
       </RadioGroup>
     </div>
     <div v-if="chooseCategory === 'follow'">
-      <RadioGroup v-model="followModelVal">
-        <Radio label="postPage">
-          <span>主页
+        <span>主页
             <Input v-model="followPageInput" placeholder="输入主页名称..." style="padding-left:8px;width: 200px;" v-if="followModelVal === 'postPage'"></Input>
-            <Input v-model="followPageNumber" placeholder="输入主页帖子数" style="padding-left:8px;width: 200px;" v-if="followModelVal === 'postPage'"></Input>
-          </span>
-        </Radio>
-      </RadioGroup>
+        </span>
     </div>
 
     <!-- 模板添加和编辑 -->
     <Modal v-model="modalReplayCom" :title="modalReplayComEditing ? $t('message.replayEditTitle') : $t('message.replayAddTitle')">
       <Form ref="replayComFormValidate" :model="replayComData" :rules="ruleValidate" label-position="right" :label-width="50">
-        <FormItem :label="$t('message.replayAddComTitle')" prop="title">
-          <Input v-model="replayComData.title" :placeholder="$t('message.replayAddPlaceholderTitle')"></Input>
-        </FormItem>
         <FormItem :label="$t('message.replayAddComContent')" prop="content">
           <Input v-model="replayComData.content" type="textarea" :placeholder="$t('message.replayAddPlaceholderContent')"></Input>
         </FormItem>
         <FormItem :label="$t('message.replayAddComGroupID')" prop="groupID">
-          <Select v-model="replayComData.groupID" :placeholder="$t('message.replayAddPlaceholderGroupID')" multiple>
+          <Select v-model="replayComData.groupID" :placeholder="$t('message.replayAddPlaceholderGroupID')">
             <Option v-for="item in replayGroupList" :value="item.id" :key="item.id">{{ item.name }}</Option>
           </Select>
         </FormItem>
@@ -164,7 +161,7 @@
     <!-- 模板组列表管理 -->
     <Modal v-model="modalReplayGroupList"  :title="$t('message.replayGroupListTitle')">
        <div style="text-align:right;margin-bottom:2px">
-        <Button type="ghost" icon="plus" size="small" @click="modalReplayGroup = true">模板组添加</Button>
+        <Button type="ghost" icon="plus" size="small" @click="modalReplayGroup = true">添加分类</Button>
       </div>
       <div>
         <Table highlight-row height="300" ref="replayGroupTable" @on-current-change="tapChoose" :columns="replayGroupColumn" :data="replayGroupList"></Table>
@@ -257,18 +254,11 @@ export default {
         },
         {
           title: this.$t('message.replayTableTitle'),
-          key: 'title'
+          key: 'groupname'
         },
         {
           title: this.$t('message.replayTableContent'),
           key: 'content'
-        },
-        {
-          title: this.$t('message.replayTableGroup'),
-          key: 'mgs',
-          render:(h,params)=>{
-              return h('div', [   h('span', params.row.mgs.join(',')) ])
-          }
         },
 
         {
@@ -326,7 +316,7 @@ export default {
           align: 'index'
         },
         {
-          title: '组名',
+          title: '分类',
           key: 'name'
         },
         {
@@ -382,13 +372,12 @@ export default {
       ],
       replayComList: [], //模板列表数据 --table使用
       replayGroupList: [],
+      selectreplayGroupList: [],
       addReplayComOne: '',
 
       // 模板部分
       replayComData: {
-        title: '',
         content: '',
-        desc: '',
         groupID: []
       },
       // 模板组部分
@@ -397,6 +386,13 @@ export default {
         desc: ''
       },
       ruleValidate: {
+        content: [
+          {
+            required: true,
+            message: 'The content cannot be empty',
+            trigger: 'blur'
+          }
+        ],
         title: [
           {
             required: true,
@@ -486,14 +482,17 @@ export default {
   },
   methods: {
     //模板数据获取
-    getReplayComList() {
-      let token = window.localStorage.getItem('token')
+    getReplayComList(val) {
+      let token = window.localStorage.getItem('token');
+      let groupid = val !== "all" ? (val || ""):"" ;
+      let data = {
+          token:token,
+          groupid:groupid
+      };
       this.axios({
         url: 'besser/fbcc/models/modelList',
         method: 'post',
-        data: {
-          token: window.localStorage.getItem('token')
-        },
+        data: data,
         transformRequest: [
           function(data) {
             // Do whatever you want to transform the data
@@ -522,15 +521,6 @@ export default {
         .catch(err => {
           console.error('获取模块列表数据错误', err)
         })
-      // --- 待删除代码
-      // let localstroage = window.localStorage
-      // let mobileNow = localstroage.getItem('mobile')
-      // let nameKeyNow = 'replayComList' + mobileNow
-      // let replayComListGet = localstroage.getItem(nameKeyNow)
-      // if (replayComListGet) {
-      //   this.replayComList = JSON.parse(localstroage.getItem(nameKeyNow))
-      // }
-      // --- 待删除代码 end
     },
     //模板组数据获取
     getReplayGroupList() {
@@ -561,7 +551,12 @@ export default {
       })
         .then(res => {
           if (res.data.code === 200) {
-            this.replayGroupList = res.data.data
+            this.replayGroupList = res.data.data;
+            this.selectreplayGroupList = JSON.parse(JSON.stringify(res.data.data));
+            this.selectreplayGroupList.unshift({
+                id:"all",
+                name:"所有分类"
+            });
           } else {
             console.warning('获取模版组列表失败', res)
           }
@@ -669,18 +664,14 @@ export default {
                 //编辑请求参数
                 id: this.modalReplayComEditingID,
                 token: window.localStorage.getItem('token'),
-                title: this.replayComData.title,
                 content: this.replayComData.content,
-                desc: this.replayComData.desc,
-                mgs: this.replayComData.groupID
+                groupid: this.replayComData.groupID
               }
             : {
                 // 添加请求参数
                 token: window.localStorage.getItem('token'),
-                title: this.replayComData.title,
                 content: this.replayComData.content,
-                desc: this.replayComData.desc,
-                mgs: this.replayComData.groupID
+                groupid: this.replayComData.groupID
               }
           this.axios({
             url: postUrl,
@@ -779,7 +770,6 @@ export default {
             }
           }).then(res => {
               if (res.data.code === 200) {
-                  console.log(1123112312312313000)
                 this.$Message.success('操作成功')
               } else {
                 this.$Message.warning('操作失败', res)
@@ -796,11 +786,9 @@ export default {
               this.modalReplayGroupLoading = false
               this.modalReplayGroupEditing = false
               this.modalReplayGroupEditingID = ''
-                console.log(1123112312312313)
             })
         } else {
           //
-            console.log(11231123123123131231)
           this.modalReplayGroupLoading = false
           this.modalReplayGroupEditing = false
           this.modalReplayGroupEditingID = ''
@@ -817,9 +805,7 @@ export default {
       this.modalReplayComEditing = true //设置模板执行编辑状态
       this.modalReplayComEditingID = item.row.id //设置正在编辑的模板ID
       this.replayComData = {
-        title: item.row.title ? item.row.title:'',
         content: item.row.content ? item.row.content:'',
-        desc: item.row.desc ? item.row.desc:'',
         groupID: item.row.groupID ? item.row.groupID:[]
       } //设置编辑前的内容
     },
@@ -873,15 +859,6 @@ export default {
           console.error('删除模块异常', err)
           this.$Message.error('删除模块异常')
         })
-
-      // --- 待删除代码
-      // this.replayComList.splice(index, 1)
-      // let localstroage = window.localStorage
-      // let addReplayComOneString = JSON.stringify(this.replayComList)
-      // let mobileNow = localstroage.getItem('mobile')
-      // let nameKeyNow = 'replayComList' + mobileNow
-      // localstroage.setItem(nameKeyNow, addReplayComOneString)
-      // --- 待删除代码 end
     },
     tapAddReplayGroupDel(item) {
       if (!confirm('确定执行删除吗？')) return;
@@ -987,25 +964,18 @@ export default {
 
             let mainId = 0
             if (Number(dateValNow) > 0) {
-              // console.log('mainId的判断')
               mainId =
                 dateValNow.toString() +
                 Math.floor(Math.random() * 10).toString() +
                 Math.floor(Math.random() * 10).toString() +
                 Math.floor(Math.random() * 10).toString()
-              // console.log('mainId的判断2', mainId)
             } else {
-              // console.log('mainId的判断3')
               mainId =
                 new Date().valueOf().toString() +
                 Math.floor(Math.random() * 10).toString() +
                 Math.floor(Math.random() * 10).toString() +
                 Math.floor(Math.random() * 10).toString()
             }
-
-            console.log('回复的mainId', mainId)
-            console.log('回复的batchId', batchId)
-            console.log('tasks', tasks)
             let postTypeVal =
               this.likeModelVal === 'postTimeLine'
                 ? 0
@@ -1090,25 +1060,18 @@ export default {
 
                       let mainId = 0
                       if (Number(dateValNow) > 0) {
-                          // console.log('mainId的判断')
                           mainId =
                               dateValNow.toString() +
                               Math.floor(Math.random() * 10).toString() +
                               Math.floor(Math.random() * 10).toString() +
                               Math.floor(Math.random() * 10).toString()
-                          // console.log('mainId的判断2', mainId)
                       } else {
-                          // console.log('mainId的判断3')
                           mainId =
                               new Date().valueOf().toString() +
                               Math.floor(Math.random() * 10).toString() +
                               Math.floor(Math.random() * 10).toString() +
                               Math.floor(Math.random() * 10).toString()
                       }
-
-                      console.log('回复的mainId', mainId)
-                      console.log('回复的batchId', batchId)
-                      console.log('tasks', tasks)
                       let postTypeVal = 1
                       let body = {
                           imei: imei,
@@ -1193,24 +1156,18 @@ export default {
 
             let mainId = 0
             if (Number(dateValNow) > 0) {
-              // console.log('mainId的判断')
               mainId =
                 dateValNow.toString() +
                 Math.floor(Math.random() * 10).toString() +
                 Math.floor(Math.random() * 10).toString() +
                 Math.floor(Math.random() * 10).toString()
-              // console.log('mainId的判断2', mainId)
             } else {
-              // console.log('mainId的判断3')
               mainId =
                 new Date().valueOf().toString() +
                 Math.floor(Math.random() * 10).toString() +
                 Math.floor(Math.random() * 10).toString() +
                 Math.floor(Math.random() * 10).toString()
             }
-
-            // console.log('回复的mainId', mainId)
-            // console.log('回复的batchId', batchId)
             let postTypeVal =
               this.forwardModelVal === 'postTimeLine'
                 ? 0
@@ -1314,15 +1271,12 @@ export default {
 
             let mainId = 0
             if (Number(dateValNow) > 0) {
-              // console.log('mainId的判断')
               mainId =
                 dateValNow.toString() +
                 Math.floor(Math.random() * 10).toString() +
                 Math.floor(Math.random() * 10).toString() +
                 Math.floor(Math.random() * 10).toString()
-              // console.log('mainId的判断2', mainId)
             } else {
-              // console.log('mainId的判断3')
               mainId =
                 new Date().valueOf().toString() +
                 Math.floor(Math.random() * 10).toString() +
@@ -1330,8 +1284,6 @@ export default {
                 Math.floor(Math.random() * 10).toString()
             }
 
-            // console.log('回复的mainId', mainId)
-            // console.log('回复的batchId', batchId)
             let postTypeVal =
               this.likeModelVal === 'replyTimeLine'
                 ? 0

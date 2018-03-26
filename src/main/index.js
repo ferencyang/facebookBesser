@@ -83,7 +83,7 @@ function createWindow() {
   })
 
   ipcMain.on('surfbird:openHomeUrl', function (e) {
-    shell.openExternal('https://thebesser.com')
+    shell.openExternal('http://thebesser.com')
   })
 
 
