@@ -302,7 +302,7 @@ li {
     <Table border :columns="columns4" :data="this.devicesListAllTable" @on-selection-change="getSelectionData" ></Table>
     <div slot="footer">
       <Button @click="modalOperate = false">取消</Button>
-      <Button type="primary" :loading=false  @click="tapSwitchGroupEdit()">切换选中设备</Button>
+      <Button type="primary" :loading=false  @click="tapSwitchGroupEdit()">切换账号</Button>
     </div>
   </Modal>
   <!-- model end -->

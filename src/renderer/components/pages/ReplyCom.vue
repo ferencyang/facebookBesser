@@ -1302,7 +1302,7 @@ export default {
               sign: 1,
               type: 33,
               body: bodyStr
-            })
+            });
 
             this.changeBtnStatus()
             window.sessionStorage.setItem('taskNow', this.$t('message.reply'))
