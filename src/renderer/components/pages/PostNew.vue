@@ -297,10 +297,10 @@
             <div style="padding:15px 15px 10px 15px;width:100%;background-color:#f4f4f4;border-radius:5px;">
                 <Form ref="" :model="templet" :rules="ruleValidate" :label-width="60">
                     <FormItem label="标题" >
-                        <Input v-model.trim="templet.title" type="text"  :placeholder="$t('message.postnewPlaceholder')"></Input>
+                        <Input v-model.trim="templet.title" type="text"  :placeholder='"模板标签"'></Input>
                     </FormItem>
                     <FormItem label="内容" prop="content">
-                        <Input v-model.trim="templet.content" type="textarea" :rows="3" :placeholder="$t('message.postnewPlaceholder')"></Input>
+                        <Input v-model.trim="templet.content" type="textarea" :rows="3" :placeholder='"模板内容"'></Input>
                     </FormItem>
                     <FormItem label="图片" >
                         <div class="demo-upload-list" v-for="item in modeluploadList" style="margin-top:8px;">
@@ -324,7 +324,7 @@
                         </Upload>
                     </FormItem>
                     <FormItem label="位置" prop="content">
-                        <Input v-model.trim="templet.loc" type="text"  :placeholder="$t('message.postnewPlaceholder')"></Input>
+                        <Input v-model.trim="templet.loc" type="text"  :placeholder='"位置"'></Input>
                     </FormItem>
                 </Form>
 
