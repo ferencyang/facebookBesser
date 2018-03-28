@@ -299,7 +299,7 @@ li {
 
   <!-- model -->
   <Modal v-model="modalOperate" :title="$t('message.manageOnlineAccount')" :ok-text="$t('message.confirm')" :cancel-text="$t('message.cancel')" @on-cancel="tapAddGroupCancel">
-    <Table border :columns="columns4" :data="this.devicesListAllTable" @on-selection-change="getSelectionData" ></Table>
+    <Table border height='400' :columns="columns4" :data="this.devicesListAllTable" @on-selection-change="getSelectionData" ></Table>
     <div slot="footer">
       <Button @click="modalOperate = false">取消</Button>
       <Button type="primary" :loading=false  @click="tapSwitchGroupEdit()">切换账号</Button>
@@ -312,6 +312,18 @@ li {
     <p>
       <Input v-model.trim="feedBackVal" type="textarea" :rows="3" :placeholder="$t('message.feedbackTip')"></Input>
     </p>
+  </Modal>
+  <!-- model end -->
+  <!-- model -->
+  <Modal v-model="changeAccount" :title='"更改设备账号"' :ok-text='"确定"' :cancel-text="$t('message.cancel')" @on-ok="tapSwitchAccount" >
+    <Form ref="accountdate" :model="account" :rules="ruleValidate" :label-width="80">
+      <FormItem label="账号：" prop="name">
+        <Input v-model="account.name" placeholder="请输入账号..."></Input>
+      </FormItem>
+      <FormItem label="密码：" prop="password">
+        <Input v-model="account.password" placeholder="请输入密码..." type="password"></Input>
+      </FormItem>
+    </Form>
   </Modal>
   <!-- model end -->
 
@@ -356,7 +368,7 @@ export default {
           {
               title: '在线设备',
               key: 'imei'
-          }/*,
+          },
           {
               title: '操作',
               key: 'action',
@@ -376,18 +388,33 @@ export default {
                               },
                               on: {
                                   click: () => {
-                                      this.tapSwitchGroupEdit(params)
+                                      this.changeAccount = true;
+                                      this.account.imie =params.row.imei;
                                   }
                               }
                           },
-                          "切换下一个账号"
+                          "修改设备登录账号"
                       )
                   ])
               }
-          }*/
+          }
       ],
       devicesListAllTable:[],
-      selectedData:[]
+      selectedData:[],
+      changeAccount:false,
+      account:{
+          name:"",
+          password:"",
+          imei:""
+      },
+      ruleValidate: {
+          name: [
+              { required: true, message: '账号不能为空', trigger: 'blur' }
+          ],
+          password: [
+              { required: true, message: '密码不能为空', trigger: 'blur' },
+          ]
+      }
     }
   },
   mounted() {
@@ -2004,6 +2031,39 @@ export default {
           this.$Message.info('已提交切换账号请求');
           this.modalOperate = false;
     },
+      tapSwitchAccount(){
+      let imei = this.account.imie;
+      let token = window.localStorage.getItem("token");
+      let batchId = (new Date()).valueOf().toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
+      let mainId = (new Date()).valueOf().toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
+      let data ={
+          name:this.account.name,
+          password:this.account.password
+      }
+      let tasks = [{
+          data: data,
+          batchId: batchId,
+          type: 121,
+      }]
+      let body = {
+          token: token,
+          mainId: mainId,
+          delaySecond: 0,
+          category: 0,
+          imei: imei,
+          tasks: tasks
+      }
+
+      let bodyStr = JSON.stringify(body)
+      this.$socket.emit("messageholder", {
+          sign: 1,
+          type: 33,
+          status: 0,
+          body: bodyStr
+      });
+      this.$Message.info('已提交修改登录账号请求');
+      console.log(123132)
+  },
     getSelectionData(val) {
         this.selectedData = [];
         for(let i=0;i<val.length;i++){
