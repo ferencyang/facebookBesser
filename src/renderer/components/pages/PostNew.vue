@@ -112,7 +112,14 @@
         overflow: hidden;
         transition: border-color .2s ease;
     }
-
+.selfUpload{
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+}
 </style>
 
 <template>
@@ -148,6 +155,7 @@
                                         <Icon type="camera" size="20"></Icon>
                                     </div>
                                 </Upload>
+                                <input v-if="uploadList.length < 9"type="file" id="selfUpload1" class="selfUpload" v-bind:style="{left:15+uploadList.length*65 + 'px'}" style="top:96px">
                                 <div class="demo-location">
                                     <Button type="dashed" style="width: 58px;height:58px;line-height: 46px;" @click="handleLocationModel">
                                         <Icon type="ios-location" size="20"></Icon>
@@ -315,13 +323,17 @@
                             <template v-else>
                                 <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
                             </template>
+                            <template>
+                                {{item.showProgress}}
+                            </template>
                         </div>
-                        <Upload ref="modelupload" :show-upload-list="false" :default-file-list="defaultList" :on-success="handleSuccess" :format="['jpg','jpeg','png','mp4']" :max-size="51200" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload"
-                                :multiple=true type="drag" :data="extraData" :action="actionUrl" style="display: inline-block;width:58px;margin-top:8px;" v-if="modeluploadList.length < 9">
+                        <Upload ref="modelupload" :show-upload-list="false" :default-file-list="defaultList" :on-success="handleSuccess" :on-progress	="handleProgress" :on-error	="handleError" :format="['jpg','jpeg','png','mp4']" :max-size="51200" :on-format-error="handleFormatError" :on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload"
+                                :multiple=true type="drag" :action="''" style="display: inline-block;width:58px;margin-top:8px;" v-if="modeluploadList.length < 9">
                             <div style="width: 58px;height:58px;line-height: 58px;">
                                 <Icon type="camera" size="20"></Icon>
                             </div>
                         </Upload>
+                        <input id="selfUpload2" type="file" class="selfUpload" v-if="modeluploadList.length < 9" v-bind:style="{left:(modeluploadList.length<6 ?modeluploadList.length:modeluploadList.length-6 )*65 + 'px',top:(modeluploadList.length<6 ? 6:90 ) + 'px'}">
                     </FormItem>
                     <FormItem label="位置" prop="content">
                         <Input v-model.trim="templet.loc" type="text"  :placeholder='"位置"'></Input>
@@ -368,7 +380,7 @@
                 checkAllGroup: [],
                 chooseTypeVal: 'postTimeLine',
                 actionUrl: this.GLOBAL.httpSrc + 'besser/fbcc/upload',
-                fileDownUrl: this.GLOBAL.httpSrc + 'besser/fbcc/download?fileName=',
+                fileDownUrl: "http://besser-facebook-1253592979.cos.ap-shanghai.myqcloud.com/appupgrade/upload/images/",
                 showBtn: true,
                 timecount: this.GLOBAL.limitSec,
                 columns7: [{
@@ -451,7 +463,37 @@
                     },
                     {
                         title: "模板图片",
-                        key: 'url'
+                        key: 'url',
+                        render: (h, params) => {
+                            var self = this;
+                            let urlList =  params.row.url.split(",");
+                            console.log(params.row.url)
+                            let renders = [];
+                            for(let i=0;i<urlList.length;i++){
+                                renders.push(
+                                    h(
+                                        'div',{
+                                            style:{
+                                                width:'40px',
+                                                height:'40px',
+                                                float:"left"
+                                            }
+                                        },
+                                        [h(
+                                        'img',{
+                                            attrs:{
+                                                src:self.fileDownUrl + urlList[i]
+                                            },
+                                            style:{
+                                                width:'100%',
+                                                height:'100%'
+                                            }
+                                        }
+                                    )])
+                                )
+                            }
+                            return h('div',renders)
+                        }
                     },
                     {
                         title: "位置",
@@ -523,7 +565,8 @@
                     loc:"",
                     id:""
                 },
-                selectRow:[]
+                selectRow:[],
+                uploading:false
             }
         },
         computed:{
@@ -574,10 +617,8 @@
             },
             handleRemove(file) {
                 console.log('handleRemove操作', file)
-                let upload = this.postType ? "modelupload":"upload";
-                const fileList = this.$refs[upload].fileList;
-                this.$refs[upload].fileList.splice(fileList.indexOf(file), 1);
-                console.log(upload,fileList,this.$refs[upload].fileList)
+                let upload = this.postType ? this.modeluploadList:this.uploadList;
+                upload.splice(upload.indexOf(file), 1);
             },
             handleSuccess(res, file) {
                 console.log('handleSuccess操作', file)
@@ -598,6 +639,7 @@
                 });
             },
             handleBeforeUpload() {
+                this.uploading = 1;
                 let upload = this.postType ? this.modeluploadList:this.uploadList;
                 const check = upload.length < 9;
                 if (!check) {
@@ -606,6 +648,13 @@
                     });
                 }
                 return check;
+            },
+            handleProgress() {
+
+            },
+            handleError() {
+                this.uploading = 0;
+                console.log(this.modeluploadList)
             },
             clearUploadFile() {
 
@@ -710,19 +759,15 @@
 
                         let text = this.postType ? this.selectRow[0].content : this.inputVal;
                         let location =  this.postType ? this.selectRow[0].position : this.locationText;
-                        let multimedia = [];
-                        for (var i = 0; i < this.uploadList.length; i++) {
-                            let imgUrlOne = this.uploadList[i].response.data.fileName;
-                            let imgUrlType = imgUrlOne.substr(-3);
-                            let imgUrlNum = imgUrlType !== 'mp4' ? 1 : 2;
-                            let imgUrlByte = this.stringToBytes(imgUrlOne);
-                            let imgUrlOneArr = [imgUrlNum];
-                            for (var j = 0; j < imgUrlByte.length; j++) {
-                                imgUrlOneArr.push(imgUrlByte[j]);
+                        let urlList = [];
+                        if(!this.postType){
+                            for (var i = 0; i < this.uploadList.length; i++) {
+                                urlList.push(this.uploadList[i].name)
                             }
-                            multimedia.push(imgUrlOneArr);
+                        }else{
+                            urlList = this.selectRow[0].url.split(",")
                         }
-                        if (text === '' && multimedia.length === 0) {
+                        if (text === '' && urlList.length === 0) {
 
                             this.$Notice.warning({
                                 title: this.$t("message.tipWarnPostnewNoContent"),
@@ -736,7 +781,7 @@
                                 batchId: batchId,
                                 data: {
                                     text: text,
-                                    multimedia: multimedia,
+                                    url: urlList,
                                     location: location
                                 }
                             }];
@@ -1035,8 +1080,11 @@
                 let label = this.templet.title || "";
                 let content = this.templet.content || "";
                 let position = this.templet.loc || "";
-                let url = this.templet.url || "";
+                let url = "";
                 let id = this.templet.id || "";
+                for(let i =0;i<this.modeluploadList.length;i++){
+                    url = url ? url + "," + this.modeluploadList[i].name : this.modeluploadList[i].name
+                }
                 let data = {
                     token: token,
                     label: label,
@@ -1129,11 +1177,24 @@
                     })
             },
             tapAddPostEdit(row) {//编辑模板数据
+                console.log(row)
                 this.templet.id  = this.postNewComList[row.index].id || "";
                 this.templet.title  = row.row.label || "";
                 this.templet.content = row.row.content || "";
                 this.templet.loc = row.row.position || "";
                 this.templet.url = row.row.url || "";
+                if(this.templet.url){
+                    let img = this.templet.url.split(",")
+                    this.modeluploadList = [];
+                    for(let i=0;i<img.length;i++){
+                        let file = {
+                            url: this.fileDownUrl +img[i],
+                            name: img[i],
+                            status:"finished"
+                        };
+                        this.modeluploadList.push(file)
+                    }
+                }
                 this.modalAdd = true;
             },
             postnewPane(val){//控制当前发帖方式
@@ -1146,6 +1207,89 @@
                         url:"",
                         loc:"",
                         id:""
+                };
+                this.modeluploadList = []
+            },
+            uploadFiles() {
+                let self =this;
+                var Bucket = 'besser-facebook-1253592979';
+                var Region = 'ap-shanghai';
+                var protocol = location.protocol === 'https:' ? 'https:' : 'http:';
+                var prefix = protocol + '//' + Bucket + '.cos.' + Region + '.myqcloud.com/';
+
+                // 计算签名
+                var getAuthorization = function (options, callback) {
+                    var method = (options.Method || 'get').toLowerCase();
+                    var key = options.Key || '';
+                    var pathname = key.indexOf('/') === 0 ? key : '/' + key;
+
+                    /*var url = '../server/auth.php';*/
+                    var url = 'http://127.0.0.1:3000/auth.js';
+                    var xhr = new XMLHttpRequest();
+                    var data = {
+                        method: method,
+                        pathname: pathname,
+                    };
+                    xhr.open('POST', url, true);
+                    xhr.setRequestHeader('content-type', 'application/json');
+                    xhr.onload = function (e) {
+                        if (e.target.responseText === 'action deny') {
+                            alert('action deny');
+                        } else {
+                            callback(e.target.responseText);
+                        }
+                    };
+                    xhr.send(JSON.stringify(data));
+                };
+
+                // 上传文件
+                var uploadFile = function (file, callback) {
+                    let random = (new Date()).valueOf().toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString()
+                    var Key = 'appupgrade/upload/images/' + random +file.name; // 这里指定上传目录和文件名
+                    getAuthorization({Method: 'put', Key: Key}, function (auth) {
+
+                        var url = prefix + Key;
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('put', url, true);
+                        xhr.setRequestHeader('Authorization', auth);
+                        xhr.onload = function () {
+                            if (xhr.status === 200 || xhr.status === 206) {
+                                /*var ETag = xhr.getResponseHeader('etag');*/
+                                callback(null, {url: url});
+                            } else {
+                                callback('文件 ' + Key + ' 上传失败，状态码：' + xhr.status);
+                            }
+                        };
+                        xhr.onerror = function () {
+                            callback('文件 ' + Key + ' 上传失败，请检查是否没配置 CORS 跨域规则');
+                        };
+                        xhr.send(file);
+                    });
+                };
+
+                var selfUpload = function (e) {
+                    var file = self.postType ? document.getElementById('selfUpload2').files[0] : document.getElementById('selfUpload1').files[0];
+                    if (!file) {
+                        return;
+                    }
+                    file && uploadFile(file, function (err, data) {
+
+                        let url = data.url;
+                        let name = url.split("/").slice(-1)[0];
+                        let file = {
+                            url: url,
+                            name: name,
+                            status:"finished"
+                        };
+                        if(self.postType){
+                            self.modeluploadList.push(file)
+                        }else {
+                            self.uploadList.push(file)
+                        }
+                    });
+                };
+                for(let i=0;i <document.getElementsByClassName('selfUpload').length;i++){
+                    document.getElementsByClassName('selfUpload')[i].onchange = selfUpload
                 }
             }
         },
@@ -1155,6 +1299,7 @@
             this.getToken();
             this.getPostNewList();
             this.getModelTableList();
+            this.uploadFiles();
         }
     }
 

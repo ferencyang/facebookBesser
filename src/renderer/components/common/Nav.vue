@@ -302,7 +302,7 @@ li {
     <Table border height='400' :columns="columns4" :data="this.devicesListAllTable" @on-selection-change="getSelectionData" ></Table>
     <div slot="footer">
       <Button @click="modalOperate = false">取消</Button>
-      <Button type="primary" :loading=false  @click="tapSwitchGroupEdit()">切换账号</Button>
+      <Button type="primary" :loading=false  @click="tapSwitchGroupEdit()">选中设备切换到下一账号</Button>
     </div>
   </Modal>
   <!-- model end -->
@@ -2032,13 +2032,13 @@ export default {
           this.modalOperate = false;
     },
       tapSwitchAccount(){
-      let imei = this.account.imie;
+      let imei =[this.account.imie];
       let token = window.localStorage.getItem("token");
       let batchId = (new Date()).valueOf().toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
       let mainId = (new Date()).valueOf().toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
       let data ={
-          name:this.account.name,
-          password:this.account.password
+          username:this.account.name,
+          passwd:this.account.password
       }
       let tasks = [{
           data: data,
@@ -2062,7 +2062,10 @@ export default {
           body: bodyStr
       });
       this.$Message.info('已提交修改登录账号请求');
-      console.log(123132)
+      this.account = {
+          name:"",
+          password:""
+      }
   },
     getSelectionData(val) {
         this.selectedData = [];
