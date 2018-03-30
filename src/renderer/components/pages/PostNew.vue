@@ -232,11 +232,11 @@
                         <div >
 
                             <div style="clear: both">
-                                <Table highlight-row height="400" ref="" @on-current-change="tapChoose" :columns="columns1" :data="postNewComList"></Table>
+                                <Table height="400" ref="" @on-selection-change="tapChoose" :columns="columns1" :data="postNewComList"></Table>
                             </div>
 
                             <div style="float:right;padding-top:8px;">
-                                <div style="margin-bottom:8px;font-size:12px;">
+                                <div style="margin-bottom:8px;font-size:12px;position: relative;">
                                     分享至：
                                     <RadioGroup v-model="chooseTypeVal">
                                         <Radio label="postTimeLine">时间线</Radio>
@@ -244,8 +244,11 @@
                                     </RadioGroup>
                                 </div>
 
+                                <Button type="ghost" size="large" v-on:click="tapAddPostDel()" v-if="showBtn">
+                                    <Icon type="trash-a" style="padding-right:5px;"></Icon>删除
+                                </Button>
                                 <Button type="ghost" size="large" v-on:click="tapModelAdd" v-if="showBtn">
-                                    <Icon type="clock" style="padding-right:5px;"></Icon>新建模板
+                                    <Icon type="plus" style="padding-right:5px;"></Icon>新建模板
                                 </Button>
                                 <Button type="ghost" size="large" v-on:click="tapModelSchedule" v-if="showBtn">
                                     <Icon type="clock" style="padding-right:5px;"></Icon>{{ $t("message.postnewBtnClock") }}
@@ -342,16 +345,20 @@
 
 
             </div>
-            <Modal :title="$t('message.view')" :ok-text="$t('message.confirm')" :cancel-text="$t('message.cancel')" v-model="visible">
-                <div v-if="imgName.substr(-3) !== 'mp4'">
-                    <img :src="fileDownUrl + imgName" v-if="visible" style="width: 100%">
-                </div>
-                <div v-else>
-                    <video :src="fileDownUrl + imgName" v-if="visible" style="width: 100%" controls="controls"></video>
-                </div>
-            </Modal>
         </Modal>
         <!-- model end -->
+
+        <Modal :title="$t('message.view')" v-model="visible">
+            <div v-if="imgName.substr(-3) !== 'mp4'">
+                <img :src="fileDownUrl + imgName" v-if="visible" style="width: 100%">
+            </div>
+            <div v-else>
+                <video :src="fileDownUrl + imgName" v-if="visible" style="width: 100%" controls="controls"></video>
+            </div>
+
+            <div slot="footer">
+            </div>
+        </Modal>
 
 
 
@@ -447,12 +454,12 @@
                     }]
                 },
                 postnewPaneVal: "action1",
-                columns1: [/*
+                columns1: [
                     {
                         type: 'selection',
                         width: 60,
                         align: 'center'
-                    },*/
+                    },
                     {
                         title: "模板标题",
                         key: 'label'
@@ -466,8 +473,7 @@
                         key: 'url',
                         render: (h, params) => {
                             var self = this;
-                            let urlList =  params.row.url.split(",");
-                            console.log(params.row.url)
+                            let urlList = params.row.url && params.row.url.split(",");
                             let renders = [];
                             for(let i=0;i<urlList.length;i++){
                                 renders.push(
@@ -1031,15 +1037,16 @@
                 localstroage.setItem(nameKeyNow, JSON.stringify(ListOne));
                 this.$Message.success(this.$t("message.tipSuccessClean"));
             },
-            tapChoose(row) {//高亮选中行,仅支持单选
-                this.selectRow = [];
-                this.selectRow.push(row);
+            tapChoose(row) {
+                this.selectRow = row;
             },
             getModelTableList(val) {//获取模板表格数据
                 let token = window.localStorage.getItem('token');
+                let mobile = window.localStorage.getItem('mobile');
                 let label = val ? val:"";
                 let data = {
                     token: token,
+                    mobile: mobile,
                     label: label
                 };
                 this.axios({
@@ -1077,6 +1084,7 @@
             },
             addModel() {//添加模板数据
                 let token = window.localStorage.getItem('token');
+                let mobile = window.localStorage.getItem('mobile');
                 let label = this.templet.title || "";
                 let content = this.templet.content || "";
                 let position = this.templet.loc || "";
@@ -1089,6 +1097,7 @@
                     token: token,
                     label: label,
                     content: content,
+                    mobile:mobile,
                     position: position,
                     url: url
                 };
@@ -1122,6 +1131,7 @@
                             }else {
                                 this.$Message.success("添加模板成功")
                             }
+                            this.selectRow = []
                             this.getModelTableList();
                         }
                     },
@@ -1134,12 +1144,22 @@
             tapModelAdd() {//添加模板显示
                 this.modalAdd = true;
             },
-            tapAddPostDel(row) {//删除当前行数据
-                console.log(row)
+            tapAddPostDel(row) {//删除数据
+                if(!row && !this.selectRow.length){
+                    this.$Notice.warning({
+                        title: "请选择操作的数据",
+                    });
+                    return;
+                }
                 let token = window.localStorage.getItem('token');
-                let id = this.postNewComList[row.index].id;
+                let id = row && row.row ? [this.postNewComList[row.index].id] : this.selectRow.map(function (v) {
+                    return v.id
+                });
+                let mobile = window.localStorage.getItem('mobile');
+
                 let data = {
                     token: token,
+                    mobile: mobile,
                     id: id
                 };
                 this.axios({
@@ -1167,6 +1187,7 @@
                     .then(res => {
                         if (res.data.code === 200) {
                             this.getModelTableList();
+                            this.selectRow = [];
                             this.$Message.success("删除模板成功");
                         } else {
                             this.$Message.error("删除模板失败");
@@ -1177,7 +1198,6 @@
                     })
             },
             tapAddPostEdit(row) {//编辑模板数据
-                console.log(row)
                 this.templet.id  = this.postNewComList[row.index].id || "";
                 this.templet.title  = row.row.label || "";
                 this.templet.content = row.row.content || "";
@@ -1224,7 +1244,7 @@
                     var pathname = key.indexOf('/') === 0 ? key : '/' + key;
 
                     /*var url = '../server/auth.php';*/
-                    var url = 'http://127.0.0.1:3000/auth.js';
+                    var url = 'http://47.98.103.73:8000/auth.js';
                     var xhr = new XMLHttpRequest();
                     var data = {
                         method: method,

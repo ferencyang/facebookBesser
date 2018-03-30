@@ -1,9 +1,22 @@
 <style>
+  #replyCom input{
+    width:160px
+  }
+  #replyCom .ivu-select-selection input{
+    width:150px
+  }
+  #replyCom  .ivu-input-wrapper {
+    width:160px !important;
+  }
+  .ivu-select-dropdown-list>li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 </style>
 
 <template>
 
-  <Card>
+  <Card id="replyCom">
     <p slot="title" style="height:35px;">
       <!-- {{ $t("message.replayTitle") }} -->
       <ButtonGroup>
@@ -82,17 +95,22 @@
       </RadioGroup>
       <div style="float: right">
         <Select  filterable  :placeholder="'请选择模板类别'" @on-change="getReplayComList">
-          <Option v-for="item in selectreplayGroupList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+          <Option v-for="item in selectreplayGroupList" :value="item.id" :key="item.id"  >
+            <span >{{ item.name }}</span>
+          </Option>
         </Select>
       </div>
       <!-- table -->
-      <Table highlight-row height="400"  @on-selection-change="tapChoose" :columns="columns3" :data="replayComList"></Table>
+      <Table  height="400"  @on-selection-change="tapChoose" :columns="columns3" :data="replayComList"></Table>
       <!-- table end -->
       <p style="padding-top:8px;">
         <label style="color:#888888;font-size:12px;">
           <Icon type="information-circled" style="padding-right:3px;"></Icon>{{ $t("message.replayTipDec") }}
         </label>
         <label style="float:right">
+          <a @click="tapAddReplayComDel" style="margin-left:10px;">
+            <Icon type="trash-a" style="padding-right:5px;"></Icon>删除
+          </a>
           <a @click="modalReplayGroupList = true" style="margin-left:10px;">
             <Icon type="navicon" style="padding-right:5px;"></Icon>分类管理
           </a>
@@ -160,11 +178,14 @@
 
     <!-- 模板组列表管理 -->
     <Modal v-model="modalReplayGroupList"  :title="$t('message.replayGroupListTitle')">
+       <div style="text-align: left;n:right;margin-bottom:2px;float: left">
+        <Button type="error" icon="trash-a" size="small" @click="tapAddReplayGroupDel()">删除</Button>
+      </div>
        <div style="text-align:right;margin-bottom:2px">
         <Button type="ghost" icon="plus" size="small" @click="modalReplayGroup = true">添加分类</Button>
       </div>
       <div>
-        <Table highlight-row height="300" ref="replayGroupTable" @on-current-change="tapChoose" :columns="replayGroupColumn" :data="replayGroupList"></Table>
+        <Table highlight-row height="300" ref="replayGroupTable" @on-selection-change="tapGroupChoose" :columns="replayGroupColumn" :data="replayGroupList"></Table>
       </div>
     </Modal>
 
@@ -245,7 +266,8 @@ export default {
       modalReplayGroupEditingID: '', //正在编辑的模板组ID
       modalReplayGroupLoading: false, //模板组提交后的loading状态
 
-      replayCom: '',
+      replayCom: [],
+      replayGroupCom: [],
       columns3: [
         {
           type: 'selection',
@@ -400,6 +422,8 @@ export default {
             trigger: 'blur'
           }
         ],
+        groupID: [
+        ],
         name: [
           {
             required: true,
@@ -485,8 +509,10 @@ export default {
     getReplayComList(val) {
       let token = window.localStorage.getItem('token');
       let groupid = val !== "all" ? (val || ""):"" ;
+      let mobile = window.localStorage.getItem('mobile');
       let data = {
           token:token,
+          mobile:mobile,
           groupid:groupid
       };
       this.axios({
@@ -525,11 +551,13 @@ export default {
     //模板组数据获取
     getReplayGroupList() {
       let token = window.localStorage.getItem('token')
+      let mobile = window.localStorage.getItem('mobile');
       this.axios({
         url: 'besser/fbcc/models/modelgroupList',
         method: 'post',
         data: {
-          token: window.localStorage.getItem('token')
+          token: token,
+          mobile:mobile
         },
         transformRequest: [
           function(data) {
@@ -653,6 +681,7 @@ export default {
     handleAddReplayComSubmit(formName) {
       // 模板编辑、添加提交
       this.modalReplayComLoading = true
+      let mobile = window.localStorage.getItem('mobile');
       this.$refs[formName].validate(valid => {
         if (valid) {
           //验证通过，提交请求
@@ -665,12 +694,14 @@ export default {
                 id: this.modalReplayComEditingID,
                 token: window.localStorage.getItem('token'),
                 content: this.replayComData.content,
+                mobile: mobile,
                 groupid: this.replayComData.groupID
               }
             : {
                 // 添加请求参数
                 token: window.localStorage.getItem('token'),
                 content: this.replayComData.content,
+                mobile: mobile,
                 groupid: this.replayComData.groupID
               }
           this.axios({
@@ -697,6 +728,7 @@ export default {
           })
             .then(res => {
               if (res.data.code === 200) {
+                this.replayCom = []
                 this.$Message.success('操作成功')
               } else {
                 this.$Message.warning('操作失败', res)
@@ -730,6 +762,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           //验证通过，提交请求
+          let mobile = window.localStorage.getItem('mobile');
           let postUrl = this.modalReplayGroupEditing
             ? 'besser/fbcc/models/modelgroupEdit'
             : 'besser/fbcc/models/modelgroupAdd'
@@ -739,12 +772,14 @@ export default {
                 id: this.modalReplayGroupEditingID,
                 token: window.localStorage.getItem('token'),
                 name: this.replayGroupData.name,
+                mobile: mobile,
                 desc: this.replayGroupData.desc
               }
             : {
                 // 添加请求参数
                 token: window.localStorage.getItem('token'),
                 name: this.replayGroupData.name,
+                mobile: mobile,
                 desc: this.replayGroupData.desc
               };
           this.axios({
@@ -771,6 +806,7 @@ export default {
           }).then(res => {
               if (res.data.code === 200) {
                 this.$Message.success('操作成功')
+                this.replayGroupCom = []
               } else {
                 this.$Message.warning('操作失败', res)
               }
@@ -820,14 +856,27 @@ export default {
       } //设置编辑前的内容
     },
     tapAddReplayComDel(item) {
-      if (!confirm('确定执行删除吗？')) return;
+      if(item && item.row){
+
+          if (!confirm('确定执行删除吗？')) return;
+      }else if(!this.replayCom.length) {
+          this.$Notice.warning({
+              title: "请选择操作的数据",
+          });
+          return;
+      }
       //删除当前模板
+      let id = item && item.row ? [item.row.id]:this.replayCom.map(function (v) {
+          return v.id
+      });
+      let mobile = window.localStorage.getItem('mobile');
       this.axios({
         url: 'besser/fbcc/models/modelDel',
         method: 'post',
         data: {
           token: window.localStorage.getItem('token'),
-          id: item.row.id
+          mobile: mobile,
+          id: id
         },
         transformRequest: [
           function(data) {
@@ -849,26 +898,38 @@ export default {
       })
         .then(res => {
           if (res.data.code === 200) {
-            this.$Message.success('删除模块成功')
+            this.replayCom = [];
+            this.$Message.success('删除模板成功')
           } else {
-            this.$Message.warning('删除模块失败', res)
+            this.$Message.warning('删除模板失败', res)
           }
           this.getReplayComList()
         })
         .catch(err => {
-          console.error('删除模块异常', err)
-          this.$Message.error('删除模块异常')
+          this.$Message.error('删除模板异常')
         })
     },
     tapAddReplayGroupDel(item) {
-      if (!confirm('确定执行删除吗？')) return;
+      if(item){
+          if (!confirm('确定执行删除吗？')) return;
+      }else if(!this.replayGroupCom.length){
+          this.$Notice.warning({
+              title: "请选择操作的数据",
+          });
+          return;
+      }
       //删除当前模板组
+      let id = item && item.row ?  [item.row.id]:this.replayGroupCom.map(function (v) {
+          return v.id
+      });
+      let mobile = window.localStorage.getItem('mobile');
       this.axios({
         url: 'besser/fbcc/models/modelgroupDel',
         method: 'post',
         data: {
           token: window.localStorage.getItem('token'),
-          id: item.row.id
+          mobile: mobile,
+          id: id
         },
         transformRequest: [
           function(data) {
@@ -890,6 +951,7 @@ export default {
       })
         .then(res => {
           if (res.data.code === 200) {
+              this.replayGroupCom = []
             this.$Message.success('删除模块组成功')
           } else {
             this.$Message.warning('删除模块组失败', res)
@@ -902,13 +964,10 @@ export default {
         })
     },
     tapChoose(val) {
-
-        let content = [];
-        for(let i in val){
-          content.push(val[i].content)
-        }
-       this.replayCom = content
-       console.log('点击的内容', content)
+       this.replayCom = val
+    },
+    tapGroupChoose(val) {
+       this.replayGroupCom = val
     },
     tapLike(dateValNow, timeVal) {
       let taskNow = window.sessionStorage.getItem('taskNow')
@@ -1214,9 +1273,10 @@ export default {
           title: taskNow + this.$t('message.tipWarnTaskNowNot')
         })
       } else {
-        let replayCom = this.replayCom
-        console.log(replayCom)
-        if (replayCom === '') {
+        let replayCom = this.replayCom.map(function (v) {
+            return v.content
+        });
+        if (replayCom.length == '') {
           this.$Message.warning(this.$t('message.tipWarnReplay'))
         } else if (
           this.replyPageInput === '' &&
@@ -1224,7 +1284,6 @@ export default {
         ) {
           this.$Message.warning('请输入主页关键词')
         } else {
-            console.log(replayCom)
           let localstroage = window.localStorage
           let imei = this.checkImeiOnline()
           let token = localstroage.getItem('token')
