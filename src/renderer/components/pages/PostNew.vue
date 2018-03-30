@@ -304,7 +304,7 @@
         </Modal>
         <!-- model end -->
         <!-- model -->
-        <Modal v-model="modalAdd" title="新建模板" ok-text="确认" cancel-text="取消"  @on-ok="addModel" @on-cancel="clearTempletData">
+        <Modal v-model="modalAdd" :title="templet.id ? '修改模板':'新建模板'"  @on-cancel="clearTempletData">
             <div style="padding:15px 15px 10px 15px;width:100%;background-color:#f4f4f4;border-radius:5px;">
                 <Form ref="" :model="templet" :rules="ruleValidate" :label-width="60">
                     <FormItem label="标题" >
@@ -344,6 +344,10 @@
                 </Form>
 
 
+            </div>
+            <div slot="footer">
+                <Button @click="clearTempletData()">{{$t('message.cancel')}}</Button>
+                <Button type="primary" :loading="false" @click="addModel">{{$t('message.confirm')}}</Button>
             </div>
         </Modal>
         <!-- model end -->
@@ -440,6 +444,7 @@
                 postNewListOneImg: [],
                 postNewListOneVideo: [],
                 index: 1,
+                loading: false,
                 dateOption: {
                     disabledDate(date) {
                         return date && date.valueOf() < Date.now() - 86400000;
@@ -578,9 +583,17 @@
         computed:{
             typeNumber(){
                 if (this.chooseTypeVal === "postTimeLine") {
-                    return 33;
+                    if(this.postType ===0 ){
+                        return 33;
+                    }else{
+                        return 122;
+                    }
                 } else if(this.chooseTypeVal === "postPages") {
-                    return 34
+                    if(this.postType ===0 ){
+                        return 34;
+                    }else{
+                        return 123;
+                    }
                 } else if(this.chooseTypeVal === "postGroups") {
                     return 35
                 } else {
@@ -763,73 +776,87 @@
                         this.$Message.warning(this.$t("message.tipWarnChooseAccount"));
                     } else {
 
-                        let text = this.postType ? this.selectRow[0].content : this.inputVal;
-                        let location =  this.postType ? this.selectRow[0].position : this.locationText;
+                        let text = this.postType ? "" : this.inputVal;
+                        let location =  this.postType ? "" : this.locationText;
                         let urlList = [];
+                        let data = [];
                         if(!this.postType){
                             for (var i = 0; i < this.uploadList.length; i++) {
-                                urlList.push(this.uploadList[i].name)
+                                urlList.push(this.fileDownUrl+ this.uploadList[i].name)
                             }
+                            if (text === '' && urlList.length === 0) {
+
+                                this.$Notice.warning({
+                                    title: this.$t("message.tipWarnPostnewNoContent"),
+                                });
+                                return;
+                            }
+                            data = [{text: text, url: urlList, location: location}]
+
                         }else{
-                            urlList = this.selectRow[0].url.split(",")
-                        }
-                        if (text === '' && urlList.length === 0) {
-
-                            this.$Notice.warning({
-                                title: this.$t("message.tipWarnPostnewNoContent"),
-                            });
-
-                        } else {
-                            console.log(this.typeNumber);
-                            let batchId = (new Date()).valueOf().toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
-                            let tasks = [{
-                                type: this.typeNumber,
-                                batchId: batchId,
-                                data: {
-                                    text: text,
-                                    url: urlList,
-                                    location: location
+                            for(let i =0;i<this.selectRow.length;i++){
+                                urlList = this.selectRow[i].url &&  this.selectRow[i].url.split(",")
+                                let every = {
+                                    text: this.selectRow[i].content,
+                                    url: urlList ? this.fileDownUrl+ urlList :"",
+                                    location: this.selectRow[i].position
                                 }
-                            }];
-
-                            let mainId = 0;
-                            if (Number(dateValNow) > 0) {
-                                mainId = dateValNow.toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
-                            } else {
-                                mainId = (new Date()).valueOf().toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
+                                data.push(every)
                             }
-                            let postTypeVal = this.chooseTypeVal === 'postTimeLine' ? 0 : (this.chooseTypeVal === 'postPages' ? 1 : 2);
-
-                            let body = {
-                                imei: imei,
-                                token: token,
-                                mainId: mainId,
-                                delaySecond: timeVal,
-                                category: postTypeVal,
-                                tasks: tasks
-                            };
-                            let bodyStr = JSON.stringify(body);
-                            this.$socket.emit('messageholder', {
-                                sign: 1,
-                                type: 33,
-                                body: bodyStr
-                            });
-
-                            this.changeBtnStatus();
-                            window.sessionStorage.setItem('taskNow', '发帖');
-
-                            if (timeVal === 0) {
-                                this.keepTask(mainId, batchId, this.typeNumber, '发帖', imei);
-                            }
-                            // 保留发帖纪录
-                            this.keepPostNewVal(mainId, timeVal, text, this.uploadList, imei);
-
-                            this.inputVal = '';
-                            const fileList = this.$refs.upload.fileList;
-                            this.$refs.upload.fileList.splice(0, fileList.length);
-                            this.$Message.success(this.$t("message.tipSuccessPostnewOk"));
-
                         }
+                        let batchId = (new Date()).valueOf().toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
+                        let tasks = [{
+                            type: this.typeNumber,
+                            batchId: batchId,
+                            data: data
+                        }];
+
+                        let mainId = 0;
+                        if (Number(dateValNow) > 0) {
+                            mainId = dateValNow.toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
+                        } else {
+                            mainId = (new Date()).valueOf().toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
+                        }
+                        let postTypeVal = this.chooseTypeVal === 'postTimeLine' ? 0 : (this.chooseTypeVal === 'postPages' ? 1 : 2);
+
+                        let body = {
+                            imei: imei,
+                            token: token,
+                            mainId: mainId,
+                            delaySecond: timeVal,
+                            category: postTypeVal,
+                            tasks: tasks
+                        };
+                        let bodyStr = JSON.stringify(body);
+                        let type =  this.postType ?  122 : 33;
+                        this.$socket.emit('messageholder', {
+                            sign: 1,
+                            type: 33,
+                            body: bodyStr
+                        });
+
+                        this.changeBtnStatus();
+                        window.sessionStorage.setItem('taskNow', '发帖');
+                        if (timeVal === 0) {
+                            this.keepTask(mainId, batchId, this.typeNumber, '发帖', imei);
+                        }
+                        // 保留发帖纪录
+
+                        if(!this.postType ){
+                            let upload = this.uploadList;
+                            let urlList = "";
+                            for(let i =0;i<upload.length;i++){
+                                urlList = urlList ? urlList + ","+upload[i].name : upload[i].name;
+                            }
+                            this.keepPostNewVal(mainId, timeVal, text, urlList, imei);
+                        }else{
+                            for(let i =0;i<this.selectRow.length;i++){
+                                this.keepPostNewVal(mainId, timeVal, this.selectRow[i].content, this.selectRow[i].url, imei);
+                            }
+                        }
+                        this.inputVal = '';
+                        this.uploadList = [];
+                        this.$Message.success(this.$t("message.tipSuccessPostnewOk"));
 
                     } //if tasknow
 
@@ -909,7 +936,6 @@
 
             },
             keepPostNewVal(mainId, timeVal, text, urllist, imei) {
-
                 let d = new Date();
                 let year = d.getFullYear();
                 let day = d.getDate();
@@ -917,17 +943,16 @@
                 let hour = d.getHours();
                 let min = d.getMinutes();
                 let postTime = year + "/" + month + "/" + day + ' ' + hour + ':' + min;
-
+                var urllist = urllist ? urllist.split(","):[]
                 let videoList = [];
                 let imgList = [];
                 for (var i = 0; i < urllist.length; i++) {
-
-                    let imgUrlOne = urllist[i].response.data.fileName;
-                    let imgUrlType = imgUrlOne.substr(-3);
+                    let name = urllist[i];
+                    let imgUrlType = name.substr(-3);
                     if (imgUrlType !== 'mp4') {
-                        imgList.push(imgUrlOne);
+                        imgList.push(name);
                     } else {
-                        videoList.push(imgUrlOne);
+                        videoList.push(name);
                     }
 
                 }
@@ -955,13 +980,11 @@
                     videoList: videoList,
                     imeiList: imei
                 }
-
                 let localstroage = window.localStorage;
                 let mobileNow = localstroage.getItem('mobile');
                 let nameKeyNow = 'postNewList' + mobileNow;
                 let postNewListLocal = localstroage.getItem(nameKeyNow);
                 if (postNewListLocal !== null) {
-
                     let postNewListLocalArr = JSON.parse(postNewListLocal);
                     postNewListLocalArr.List.unshift(postNewOne);
                     localstroage.setItem(nameKeyNow, JSON.stringify(postNewListLocalArr));
@@ -1038,6 +1061,7 @@
                 this.$Message.success(this.$t("message.tipSuccessClean"));
             },
             tapChoose(row) {
+                console.log(row)
                 this.selectRow = row;
             },
             getModelTableList(val) {//获取模板表格数据
@@ -1093,6 +1117,12 @@
                 for(let i =0;i<this.modeluploadList.length;i++){
                     url = url ? url + "," + this.modeluploadList[i].name : this.modeluploadList[i].name
                 }
+                if (content == "" && url == "") {
+                    this.$Notice.warning({
+                        title: this.$t("message.tipWarnPostnewNoContent"),
+                    });
+                    return;
+                }
                 let data = {
                     token: token,
                     label: label,
@@ -1133,6 +1163,7 @@
                             }
                             this.selectRow = []
                             this.getModelTableList();
+                            this.modalAdd = false;
                         }
                     },
                     response => {
@@ -1229,6 +1260,7 @@
                         id:""
                 };
                 this.modeluploadList = []
+                this.modalAdd = false;
             },
             uploadFiles() {
                 let self =this;
@@ -1288,7 +1320,11 @@
                 };
 
                 var selfUpload = function (e) {
-                    var file = self.postType ? document.getElementById('selfUpload2').files[0] : document.getElementById('selfUpload1').files[0];
+                    let div = self.postType ? document.getElementById('selfUpload2'): document.getElementById('selfUpload1');
+                    if(!div.value){
+                        return
+                    }
+                    let file = div.files[0];
                     if (!file) {
                         return;
                     }
@@ -1307,6 +1343,7 @@
                             self.uploadList.push(file)
                         }
                     });
+                    div.value = ""
                 };
                 for(let i=0;i <document.getElementsByClassName('selfUpload').length;i++){
                     document.getElementsByClassName('selfUpload')[i].onchange = selfUpload
