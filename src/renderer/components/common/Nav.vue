@@ -173,9 +173,9 @@ li {
             <DropdownItem name="textsms">
               <Icon type="android-textsms" style="padding-right:5px;"></Icon>{{ $t("message.feedback") }}
             </DropdownItem>
-            <!-- <DropdownItem name="update">
+             <DropdownItem name="update">
               <Icon type="arrow-up-a" style="padding-right:5px;"></Icon>{{ $t("message.update") }}
-            </DropdownItem> -->
+            </DropdownItem>
 
             <!-- <Dropdown placement="left-start">
               <DropdownItem divided name="setlang">
@@ -200,6 +200,7 @@ li {
           <Icon type="close-round" style="color:#ffffff;"></Icon>
         </a>
       </div>
+      <Progress v-if="downloading" :percent="percent" :stroke-width="5" :hide-info=true style="top:-5px"></Progress>
     </Menu>
 
 
@@ -414,7 +415,9 @@ export default {
           password: [
               { required: true, message: '密码不能为空', trigger: 'blur' },
           ]
-      }
+      },
+      percent:0,
+      downloading:false
     }
   },
   mounted() {
@@ -536,7 +539,7 @@ export default {
           this.modalFeedBack = true;
           break;
         case 'update':
-          this.getUpdater();
+          this.getUpdater(false);
           break;
         case 'aboutus':
           ipcRenderer.send('surfbird:openHomeUrl', true);
@@ -603,31 +606,25 @@ export default {
       } //if...else...
 
     },
-    getUpdater() {
-      //console.log('-= 检验版本更新 =-');
-
-      // this.$Message.loading('检查新版本');
+    getUpdater(auto) {
+      let self =this;
       let versionNow = this.GLOBAL.visionNow;
       let updateDowmUrl = window.localStorage.getItem('updateDowmUrl');
       let versionNew = window.localStorage.getItem('versionNew');
       if (versionNow !== null && versionNew !== null && versionNew > versionNow) {
-        // this.$Message.destroy();
         this.$Modal.confirm({
           title: this.$t("message.updateTitle"),
           content: '<p>' + this.$t("message.updateTextOk") + '</p>',
           okText: this.$t('message.confirm'),
           cancelText: this.$t('message.cancel'),
           onOk: () => {
-            // this.$Message.loading('下载中');
-            // this.$Loading.start();
             ipcRenderer.send('surfbird:updateload', updateDowmUrl);
-            // this.$Message.destroy();
           },
           onCancel: () => {
 
           }
         });
-      } else {
+      } else if(!auto) {
         this.$Message.destroy();
         this.$Modal.info({
           title: this.$t("message.updateTitle"),
@@ -638,45 +635,43 @@ export default {
       }
 
       ipcRenderer.on('updateMessage:setProgressBar', function(event, message) {
-        //console.log('下载进度1：', message)
-        let barText = '下载' + message + '%';
-        //console.log('下载进度：', barText);
-        // let that = this;
-        // that.showBar(barText);
+        self.showBar(message);
 
       });
       //
-      // ipcRenderer.on('updateMessage:stateInterrupted', function(event, message) {
-      //     this.$Message.destroy();
-      //     this.$Loading.error();
-      //     this.$Modal.error({
-      //         title: '提示',
-      //         content: '下载失败，请重试'
-      //     });
-      // });
+      ipcRenderer.on('updateMessage:stateInterrupted', function(event, message) {
+          self.downloading = false;
+          self.percent = 0;
+          self.$Message.destroy();
+          self.$Loading.error();
+          self.$Modal.error({
+              title: '提示',
+              content: '下载失败，请重试'
+          });
+      });
       //
-      // ipcRenderer.on('updateMessage:stateCompleted', function(event, message) {
-      //   this.$Message.destroy();
-      //   this.$Loading.finish();
-      //   this.$Modal.confirm({
-      //       title: '提示',
-      //       content: '<p>下载完成，确认安装更新？</p>',
-      //       onOk: () => {
-      //           this.$Message.loading('即将重启');
-      //           ipcRenderer.send('surfbird:updateOk', true);
-      //       },
-      //       onCancel: () => {
-      //
-      //       }
-      //   });
-      // });
+      ipcRenderer.on('updateMessage:stateCompleted', function(event, message) {
+        self.$Message.destroy();
+        self.downloading = false;
+        self.$Loading.finish();
+        self.$Modal.confirm({
+            title: '提示',
+            content: '<p>下载完成，确认安装更新？</p>',
+            onOk: () => {
+                this.$Message.loading('即将重启');
+                ipcRenderer.send('surfbird:updateOk', true);
+            },
+            onCancel: () => {
+
+            }
+        });
+      });
 
 
     },
-    showBar(barText) {
-      this.$Notice.open({
-        title: barText
-      });
+    showBar(percent) {
+        this.percent = percent
+        this.downloading = true
     },
     showDevice() {
       // //console.log('开始显示设备:', this.devicesListAll);
@@ -721,17 +716,13 @@ export default {
         .then(response => {
           //console.log('返回的版本数据=-: ', response.data)
           if (response.data.code === 200) {
-            localstroage.setItem('versionNew', response.data.data.version);
-            localstroage.setItem('updateDowmUrl', response.data.data.upgradeUrl);
-            localstroage.setItem('updateForced', response.data.data.forced);
-
+            let data  = JSON.parse(response.data.data).upgradeInfos;
+            localstroage.setItem('versionNew', data[0].version);
+            localstroage.setItem('updateDowmUrl', data[0].url);
           }
-
         }, response => {
           // error callback
         });
-
-
     },
     tapOPerate() {
       let taskNow = window.sessionStorage.getItem('taskNow');
@@ -2112,7 +2103,7 @@ export default {
             for (var i = 0; i < this.devicesListAll.length; i++) {
               this.devicesListAllImei.push(this.devicesListAll[i].imei);
             }
-
+            console.log("shebei",this.devicesListAll)
             localstroage.setItem('devicesListAll', this.devicesListAllImei);
             this.showDevice();
           } else {

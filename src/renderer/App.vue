@@ -127,6 +127,8 @@ export default {
 
 
             this.$router.push('/postnew');
+            this.getUpdater(true)
+
 
           } else {
             this.$Message.error('账号或密码错误');

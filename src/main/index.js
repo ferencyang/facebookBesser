@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell, Menu } from 'electron'
+import { app, BrowserWindow, ipcMain, shell, Menu ,dialog} from 'electron'
 // var Menu = require("menu");
 var mainWindow = null;
 /**
@@ -92,12 +92,9 @@ function createWindow() {
     const fs = require('fs');
     let filePathGet = app.getAppPath();
     const filePathEnd = process.env.NODE_ENV === 'development' ? filePathGet.replace(/default_app.asar/, '') : filePathGet.replace(/app.asar/, '');
-
-    // console.log('文件路径：', filePathEnd)
     let updateDowmUrl = arg;
-    console.log('下载地址路径：', updateDowmUrl)
     if (updateDowmUrl === null) {
-      // event.sender.send('updateMessage:noUpdateDowmUrl', '没有可用更新');
+      event.sender.send('updateMessage:noUpdateDowmUrl', '没有可用更新');
       let options = {
         type: 'info',
         title: '提示',
@@ -112,20 +109,16 @@ function createWindow() {
     mainWindow.webContents.session.on('will-download', (e, item) => {
       //获取文件的总大小
       const totalBytes = item.getTotalBytes();
-
       //设置文件的保存路径，此时默认弹出的 save dialog 将被覆盖
       const filePath = filePathEnd + 'update.asar';
       const filePath02 = filePathEnd + 'app.asar';
       item.setSavePath(filePath);
-
       //监听下载过程，计算并设置进度条进度
       item.on('updated', () => {
-        // mainWindow.setProgressBar(item.getReceivedBytes() / totalBytes);
+        mainWindow.setProgressBar(item.getReceivedBytes() / totalBytes);
         let progressBarNow02 = item.getReceivedBytes() / totalBytes;
         let progressBarNow = Math.floor(progressBarNow02 * 100);
-
-
-        // event.sender.send('updateMessage:setProgressBar', progressBarNow);
+        event.sender.send('updateMessage:setProgressBar', progressBarNow);
       });
 
       item.on('updated', (event, state) => {
@@ -151,14 +144,14 @@ function createWindow() {
       //监听下载结束事件
       item.on('done', (e, state) => {
         //如果窗口还在的话，去掉进度条
-        // if (!mainWindow.isDestroyed()) {
-        //     mainWindow.setProgressBar(-1);
-        // }
+        if (!mainWindow.isDestroyed()) {
+            mainWindow.setProgressBar(-1);
+        }
 
         //下载被取消或中断了
         if (state === 'interrupted') {
           // dialog.showErrorBox('下载失败', `文件 ${item.getFilename()} 因为某些原因被中断下载`);
-          // event.sender.send('updateMessage:stateInterrupted', '下载失败');
+          event.sender.send('updateMessage:stateInterrupted', '下载失败');
           let options = {
             type: 'warning',
             title: '提示',
@@ -172,21 +165,8 @@ function createWindow() {
 
         //下载完成，让 dock 上的下载目录Q弹一下下
         if (state === 'completed') {
-          let options = {
-            type: 'none',
-            title: '提示',
-            message: "下载完成，等待更新",
-            buttons: ['关闭']
-          }
-          dialog.showMessageBox(options, function (index) {
+          event.sender.send('updateMessage:stateCompleted', '下载成功');
 
-            fs.rename(filePath, filePath02);
-            app.on('ready', createWindow)
-          })
-          // event.sender.send('updateMessage:stateCompleted', '下载成功');
-          // fs.rename(filePath, filePath02);
-          // fs.rename(filePath, filePath02);
-          // dialog.showErrorBox('下载完成');
         }
       });
     });
@@ -202,13 +182,6 @@ function createWindow() {
     let filePath02 = filePathEnd + 'app.asar';
     fs.rename(filePath, filePath02)
   })
-
-  // ipcMain.on('updateMessage:request:versionNow', (event) => {
-  //   let versionnow = app.getVersion();
-  //   event.sender.send('updateMessage:get:versionNow', versionnow);
-  //   // event.returnValue = app.getVersion();
-  //   // console.log('版本信息：', app.getVersion())
-  // })
 
 
 }  //function
