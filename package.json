@@ -17,7 +17,7 @@
     "postinstall": ""
   },
   "build": {
-    "productName": "clientproject",
+    "productName": "百森云控",
     "appId": "org.simulatedgreg.electron-vue",
     "directories": {
       "output": "build"
@@ -41,7 +41,9 @@
       ]
     },
     "mac": {},
-    "win": {},
+    "win": {
+      "icon": "build/icon.png"
+    },
     "linux": {
       "icon": "build/icons"
     }

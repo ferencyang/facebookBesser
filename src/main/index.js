@@ -1,6 +1,7 @@
-import { app, BrowserWindow, ipcMain, shell, Menu ,dialog} from 'electron'
+import { app, BrowserWindow, ipcMain, shell, Menu ,dialog, autoUpdater } from 'electron'
 // var Menu = require("menu");
 var mainWindow = null;
+var exec = require('child_process').exec;
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -177,14 +178,18 @@ function createWindow() {
     const fs = require('fs');
     let filePathGet = app.getAppPath();
     const filePathEnd = process.env.NODE_ENV === 'development' ? filePathGet.replace(/default_app.asar/, '') : filePathGet.replace(/app.asar/, '');
-
     let filePath = filePathEnd + 'update.asar';
     let filePath02 = filePathEnd + 'app.asar';
-    fs.rename(filePath, filePath02)
+    let updatePath = filePathEnd.replace(/resources\\/,"") + "run.vbs";
+    exec(updatePath, function(err,stdout,stderr){
+
+    });
+    app.exit(0)
   })
 
 
 }  //function
+
 
 app.on('ready', createWindow)
 
@@ -200,31 +205,3 @@ app.on('activate', () => {
     createWindow();
   }
 })
-
-
-
-
-
-/**
- * Auto Updater
- *
- * Uncomment the following code below and install `electron-updater` to
- * support auto updating. Code Signing with a valid certificate is required.
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
- */
-
-
-// import { autoUpdater } from 'electron-updater'
-//
-// autoUpdater.logger = require("electron-log")
-// autoUpdater.logger.transports.file.level = "info"
-//
-// autoUpdater.on('update-downloaded', () => {
-//   autoUpdater.quitAndInstall()
-// })
-//
-// autoUpdater.setFeedURL('https://banfang.info/besser/app/master/')
-//
-// app.on('ready', () => {
-//   if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-// })

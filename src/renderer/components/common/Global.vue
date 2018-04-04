@@ -21,7 +21,7 @@ const httpSrc = IPnow + ':17108/';
 // const httpSrc = 'http://api.thebesser.com:17108/';
 
 const limitSec = 5;
-const visionNow = '0.0.1';
+const visionNow = '18.4.4';
 export default {
     socketSrc, //长连接地址
     httpSrc, //http地址

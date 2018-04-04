@@ -177,7 +177,7 @@ li {
               <Icon type="arrow-up-a" style="padding-right:5px;"></Icon>{{ $t("message.update") }}
             </DropdownItem>
 
-            <!-- <Dropdown placement="left-start">
+             <!--<Dropdown placement="left-start">
               <DropdownItem divided name="setlang">
                 <Icon type="earth" style="padding-right:5px;"></Icon>{{langValName}}
               </DropdownItem>
@@ -186,7 +186,7 @@ li {
                 <DropdownItem :selected="langVal === 'TW'" name="TW">繁體中文</DropdownItem>
                 <DropdownItem :selected="langVal === 'EN'" name="EN">English</DropdownItem>
               </DropdownMenu>
-            </Dropdown> -->
+            </Dropdown>-->
             <DropdownItem divided name="aboutus">
               <Icon type="person-stalker" style="padding-right:5px;"></Icon>{{ $t("message.aboutus") }}
             </DropdownItem>
@@ -614,7 +614,7 @@ export default {
       if (versionNow !== null && versionNew !== null && versionNew > versionNow) {
         this.$Modal.confirm({
           title: this.$t("message.updateTitle"),
-          content: '<p>' + this.$t("message.updateTextOk") + '</p>',
+          content: '<p>'+'当前版本:'+versionNow+' 最新版本:'+versionNew+'<p>'+'<p>' + this.$t("message.updateTextOk") + '</p>',
           okText: this.$t('message.confirm'),
           cancelText: this.$t('message.cancel'),
           onOk: () => {
@@ -628,7 +628,7 @@ export default {
         this.$Message.destroy();
         this.$Modal.info({
           title: this.$t("message.updateTitle"),
-          content: this.$t("message.updateTextNot"),
+          content: '<p>'+'您已是最新版本:'+versionNow+'<p>'+this.$t("message.updateTextNot"),
           okText: this.$t('message.confirm'),
           cancelText: this.$t('message.cancel'),
         });
@@ -658,7 +658,7 @@ export default {
             title: '提示',
             content: '<p>下载完成，确认安装更新？</p>',
             onOk: () => {
-                this.$Message.loading('即将重启');
+                self.$Message.loading('即将重启');
                 ipcRenderer.send('surfbird:updateOk', true);
             },
             onCancel: () => {

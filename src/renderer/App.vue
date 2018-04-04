@@ -127,7 +127,6 @@ export default {
 
 
             this.$router.push('/postnew');
-            this.getUpdater(true)
 
 
           } else {
