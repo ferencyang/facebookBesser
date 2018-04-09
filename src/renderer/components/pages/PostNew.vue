@@ -130,7 +130,7 @@
             <Row>
                 <Col span="24">
                 <Tabs v-model="postnewPaneVal" @on-click="postnewPane">
-                    <TabPane label="新建发帖" name="action1">
+                    <TabPane :label="$t('message.newPost')" name="action1">
                         <div class="example-case">
 
                             <div style="padding:15px 15px 10px 15px;width:100%;background-color:#f4f4f4;border-radius:5px;">
@@ -163,10 +163,10 @@
                                 </div>
                                 <div style="float:right;padding-top:8px;">
                                     <div style="margin-bottom:8px;font-size:12px;">
-                                        分享至：
+                                        {{$t('message.shareTo')}}
                                         <RadioGroup v-model="chooseTypeVal">
-                                            <Radio label="postTimeLine">时间线</Radio>
-                                            <Radio label="postGroups">小组</Radio>
+                                            <Radio label="postTimeLine">{{$t('message.timeLine')}}</Radio>
+                                            <Radio label="postGroups">{{$t('message.group')}}</Radio>
                                         </RadioGroup>
                                     </div>
 
@@ -228,27 +228,27 @@
                             </div>
                         </div>
                     </TabPane>
-                    <TabPane label="模板发帖" name="action2">
+                    <TabPane :label="$t('message.ModelPost')" name="action2">
                         <div >
 
                             <div style="clear: both">
                                 <Table height="400" ref="" @on-selection-change="tapChoose" :columns="columns1" :data="postNewComList"></Table>
                             </div>
 
-                            <div style="float:right;padding-top:8px;">
-                                <div style="margin-bottom:8px;font-size:12px;position: relative;">
-                                    分享至：
-                                    <RadioGroup v-model="chooseTypeVal">
-                                        <Radio label="postTimeLine">时间线</Radio>
-                                        <Radio label="postGroups">小组</Radio>
-                                    </RadioGroup>
-                                </div>
-
+                            <div style="margin-bottom:8px;font-size:12px;position: relative;float: right;padding-top: 20px">
+                                {{$t('message.shareTo')}}
+                                <RadioGroup v-model="chooseTypeVal">
+                                    <Radio label="postTimeLine">{{$t('message.timeLine')}}</Radio>
+                                    <Radio label="postGroups">{{$t('message.group')}}</Radio>
+                                </RadioGroup>
+                            </div>
+                            <div style="float:right;padding-top:8px;clear: both">
+                                <Input v-model="filter" icon="ios-search-strong" :placeholder="$t('message.modelTitle')" style="width: 200px;" @on-click="filterModelTableList"></Input>
                                 <Button type="ghost" size="large" v-on:click="tapAddPostDel()" v-if="showBtn">
-                                    <Icon type="trash-a" style="padding-right:5px;"></Icon>删除
+                                    <Icon type="trash-a" style="padding-right:5px;"></Icon>{{$t('message.delete')}}
                                 </Button>
                                 <Button type="ghost" size="large" v-on:click="tapModelAdd" v-if="showBtn">
-                                    <Icon type="plus" style="padding-right:5px;"></Icon>新建模板
+                                    <Icon type="plus" style="padding-right:5px;"></Icon>{{$t('message.newModel')}}
                                 </Button>
                                 <Button type="ghost" size="large" v-on:click="tapModelSchedule" v-if="showBtn">
                                     <Icon type="clock" style="padding-right:5px;"></Icon>{{ $t("message.postnewBtnClock") }}
@@ -280,7 +280,7 @@
 
                         </Col>
                         <Col span="3" offset="1">
-                        <Button type="ghost" @click="handleScheduleDel(index)">{{ $t("message.delect") }}</Button>
+                        <Button type="ghost" @click="handleScheduleDel(index)">{{ $t("message.delete") }}</Button>
                         </Button>
                         </Col>
                     </Row>
@@ -297,23 +297,23 @@
         </Modal>
         <!-- model end -->
         <!-- model -->
-        <Modal v-model="locationModelVal" title="位置" ok-text="确认" cancel-text="取消"  @on-ok="tapLocationOk" @on-cancel="tapLocationCancel">
+        <Modal v-model="locationModelVal" :title="$t('message.location')" :ok-text="$t('message.confirm')" :cancel-text="$t('message.cancel')"  @on-ok="tapLocationOk" @on-cancel="tapLocationCancel">
             <p>
-                <Input v-model="locationText" type="textarea" :rows="3" placeholder="请输入定位关键词"></Input>
+                <Input v-model="locationText" type="textarea" :rows="3" :placeholder="$t('message.locationKey')"></Input>
             </p>
         </Modal>
         <!-- model end -->
         <!-- model -->
-        <Modal v-model="modalAdd" :title="templet.id ? '修改模板':'新建模板'"  @on-cancel="clearTempletData">
+        <Modal v-model="modalAdd" :title="templet.id ? $t('message.modifyModel'): $t('message.newModel')"  @on-cancel="clearTempletData">
             <div style="padding:15px 15px 10px 15px;width:100%;background-color:#f4f4f4;border-radius:5px;">
                 <Form ref="" :model="templet" :rules="ruleValidate" :label-width="60">
-                    <FormItem label="标题" >
-                        <Input v-model.trim="templet.title" type="text"  :placeholder='"模板标签"'></Input>
+                    <FormItem :label="$t('message.replayAddComTitle')" >
+                        <Input v-model.trim="templet.title" type="text"  :placeholder="$t('message.modelLabel')"></Input>
                     </FormItem>
-                    <FormItem label="内容" prop="content">
-                        <Input v-model.trim="templet.content" type="textarea" :rows="3" :placeholder='"模板内容"'></Input>
+                    <FormItem :label="$t('message.replayAddComContent')" prop="content">
+                        <Input v-model.trim="templet.content" type="textarea" :rows="3" :placeholder="$t('message.replayTableContent')"></Input>
                     </FormItem>
-                    <FormItem label="图片" >
+                    <FormItem :label="$t('message.postnewHistoryImg')" >
                         <div class="demo-upload-list" v-for="item in modeluploadList" style="margin-top:8px;">
                             <template v-if="item.status === 'finished'">
                                 <img :src="item.url" v-if="item.url.substr(-3) !== 'mp4'">
@@ -338,8 +338,8 @@
                         </Upload>
                         <input id="selfUpload2" type="file" class="selfUpload" v-if="modeluploadList.length < 9" v-bind:style="{left:(modeluploadList.length<6 ?modeluploadList.length:modeluploadList.length-6 )*65 + 'px',top:(modeluploadList.length<6 ? 6:90 ) + 'px'}">
                     </FormItem>
-                    <FormItem label="位置" prop="content">
-                        <Input v-model.trim="templet.loc" type="text"  :placeholder='"位置"'></Input>
+                    <FormItem :label="$t('message.location')" prop="content">
+                        <Input v-model.trim="templet.loc" type="text"  :placeholder="$t('message.location')"></Input>
                     </FormItem>
                 </Form>
 
@@ -401,10 +401,10 @@
                     title: this.$t("message.postnewHistoryContent"),
                     key: 'text'
                 }, {
-                    title: '类型',
+                    title: this.$t("message.type"),
                     key: 'doTime'
                 }, {
-                    title: this.$t("message.postnewHistoryOp"),
+                    title: this.$t("message.labelOperate"),
                     key: 'action',
                     width: 150,
                     align: 'center',
@@ -434,7 +434,7 @@
                                         this.removePost(params.index)
                                     }
                                 }
-                            }, this.$t("message.delect"))
+                            }, this.$t("message.delete"))
                         ]);
                     }
                 }],
@@ -466,15 +466,15 @@
                         align: 'center'
                     },
                     {
-                        title: "模板标题",
+                        title: this.$t("message.modelTitle"),
                         key: 'label'
                     },
                     {
-                        title: "模板内容",
+                        title: this.$t("message.modelContent"),
                         key: 'content'
                     },
                     {
-                        title: "模板图片",
+                        title: this.$t("message.modelImage"),
                         key: 'url',
                         render: (h, params) => {
                             var self = this;
@@ -507,11 +507,11 @@
                         }
                     },
                     {
-                        title: "位置",
+                        title: this.$t("message.location"),
                         key: 'position'
                     },
                     {
-                        title: this.$t('message.replayTableAction'),
+                        title: this.$t('message.labelOperate'),
                         key: 'action',
                         width: 150,
                         align: 'center',
@@ -533,7 +533,7 @@
                                             }
                                         }
                                     },
-                                    this.$t('message.delect')
+                                    this.$t('message.delete')
                                 ),
                                 h(
                                     'Button',
@@ -577,6 +577,7 @@
                     id:""
                 },
                 selectRow:[],
+                filter:"",
                 uploading:false
             }
         },
@@ -741,7 +742,7 @@
                                     let dateValChaTwo = parseInt(dateValCha / 1000);
                                     this.tapSubmit(dateValNow, dateValChaTwo);
                                 } else {
-                                    this.$Message.warning('时间不能是过去的');
+                                    this.$Message.warning(this.$t('message.tipSelectDateWaring'));
                                 }
                             }
 
@@ -875,7 +876,7 @@
                         }
                     }
                 }
-                console.log('选择的在线设备是1：', imei)
+
                 var imeiNew = [];
                 for (let i = 0, l = imei.length; i < l; i++) {
                     for (let j = i + 1; j < l; j++)
@@ -883,7 +884,6 @@
                     imeiNew.push(imei[i]);
                 }
 
-                console.log('选择的在线设备是2：', imeiNew)
                 return imeiNew;
             },
             keepTask(mainId, batchId, type, name, imei) {
@@ -962,11 +962,11 @@
                 if (timeValTwo > 0) {
 
                     let doTimeGet = this.getClockTime(mainId, timeVal);
-                    doTimeType = '定时(' + doTimeGet + ')';
+                    doTimeType = this.$t('message.timing')+'(' + doTimeGet + ')';
 
                 } else {
 
-                    doTimeType = '即时任务';
+                    doTimeType = this.$t('message.timing');
 
                 }
 
@@ -1157,9 +1157,9 @@
                         if (response.data.code === 200) {
                             if(id !== ""){
                                 this.clearTempletData();
-                                this.$Message.success("修改模板成功")
+                                this.$Message.success(this.$t('message.modifyModelSuccess'))
                             }else {
-                                this.$Message.success("添加模板成功")
+                                this.$Message.success(this.$t('message.addModelSuccess'))
                             }
                             this.selectRow = []
                             this.getModelTableList();
@@ -1178,7 +1178,7 @@
             tapAddPostDel(row) {//删除数据
                 if(!row && !this.selectRow.length){
                     this.$Notice.warning({
-                        title: "请选择操作的数据",
+                        title: this.$t('message.pleaseSelectData'),
                     });
                     return;
                 }
@@ -1219,13 +1219,13 @@
                         if (res.data.code === 200) {
                             this.getModelTableList();
                             this.selectRow = [];
-                            this.$Message.success("删除模板成功");
+                            this.$Message.success(this.$t('message.delModelSuccess'));
                         } else {
-                            this.$Message.error("删除模板失败");
+                            this.$Message.error(this.$t('message.delModelFail'));
                         }
                     })
                     .catch(err => {
-                        this.$Message.error("删除模板错误");
+                        this.$Message.error(this.$t('message.delModelError'));
                     })
             },
             tapAddPostEdit(row) {//编辑模板数据
@@ -1348,6 +1348,10 @@
                 for(let i=0;i <document.getElementsByClassName('selfUpload').length;i++){
                     document.getElementsByClassName('selfUpload')[i].onchange = selfUpload
                 }
+            },
+            filterModelTableList(){
+                let val = this.filter
+                this.getModelTableList(val)
             }
         },
         mounted() {

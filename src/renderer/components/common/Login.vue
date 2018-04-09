@@ -217,11 +217,11 @@ export default {
 
                     if (mobileEnd === '') {
 
-                        this.$Message.warning('账号或密码错误');
+                        this.$Message.warning(this.$t('message.tipLoginWord'));
 
                     } else if (passwordGet === '' || passwordGet.length < 6) {
 
-                        this.$Message.warning('账号或密码错误');
+                        this.$Message.warning(this.$t('message.tipLoginWord'));
 
                     } else {
 
@@ -229,7 +229,7 @@ export default {
 
                         if (network !== '200') {
 
-                            this.$Message.error('网络连接错误');
+                            this.$Message.error(this.$t('message.tipNetworkWrong'));
 
                         } else {
 
@@ -266,7 +266,7 @@ export default {
                                 body: bodyStr
                             });
                             const msg = this.$Message.loading({
-                                content: '登录中',
+                                content: this.$t('message.tipLoginLoading'),
                                 duration: 0
                             });
 

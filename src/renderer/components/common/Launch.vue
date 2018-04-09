@@ -68,10 +68,10 @@
             </a>
             <DropdownMenu slot="list">
                 <DropdownItem name="loop">
-                    <Icon type="loop" style="padding-right:5px;"></Icon>刷新页面
+                    <Icon type="loop" style="padding-right:5px;"></Icon>{{$t('message.loop')}}
                 </DropdownItem>
                 <DropdownItem divided name="aboutus">
-                    <Icon type="person-stalker" style="padding-right:5px;"></Icon>关于百森
+                    <Icon type="person-stalker" style="padding-right:5px;"></Icon>{{$t('message.aboutus')}}
                 </DropdownItem>
             </DropdownMenu>
         </Dropdown>
@@ -93,7 +93,7 @@
         </div>
         <div class="footer">
             <div class="footer-dec">
-                Copyright © 2018 百森科技出品
+                {{$t('message.labelLogo')}}
             </div>
         </div>
 

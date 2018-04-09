@@ -339,7 +339,7 @@
 
                         </Col>
                         <!-- <Col span="3" offset="1">
-                      <Button type="ghost" @click="handleScheduleDel(index)">{{ $t("message.delect") }}</Button></Button>
+                      <Button type="ghost" @click="handleScheduleDel(index)">{{ $t("message.delete") }}</Button></Button>
                   </Col> -->
                     </Row>
                 </FormItem>
@@ -377,7 +377,7 @@ export default {
                 showBtn54: true,
                 modalSchedule: false,
                 checkValNum: 0,
-                chooseTypeVal: '点赞',
+                chooseTypeVal: this.$t('message.upvote'),
                 dateOption: {
                     disabledDate(date) {
                         return date && date.valueOf() < Date.now() - 86400000;
@@ -465,7 +465,6 @@ export default {
 
                     this.$refs[nameVal].validate((valid) => {
                         if (valid) {
-                            console.log('选择的日期：', this.formSchedule.items)
 
                             let dateItems = this.formSchedule.items;
                             for (var i = 0; i < dateItems.length; i++) {
@@ -478,18 +477,12 @@ export default {
 
                                     let dateValNow = myDateNow.getTime();
                                     let dateValSce = myDateOrg.getTime();
-
-                                    console.log('选择的日期fa：', dateValSce)
-                                    console.log('选择的日期now：', dateValNow)
-
                                     let dateValCha = dateValSce - dateValNow;
-                                    console.log('选择的日期cha：', dateValCha)
                                     if (dateValCha > 0) {
-                                        console.log('选择的日期cha88：')
                                         let dateValChaTwo = parseInt(dateValCha / 1000);
                                         this.tapAddFriendBtn(this.checkValNum, dateValNow, dateValChaTwo);
                                     } else {
-                                        this.$Message.warning('时间不能是过去的');
+                                        this.$Message.warning(this.$t('message.tipSelectDateWaring'));
                                     }
 
 
@@ -865,15 +858,13 @@ export default {
                             }
                         }
                     }
-                    console.log('选择的在线设备是1：', imei)
+
                     var imeiNew = [];
                     for (let i = 0, l = imei.length; i < l; i++) {
                         for (let j = i + 1; j < l; j++)
                             if (imei[i] === imei[j]) j = ++i;
                         imeiNew.push(imei[i]);
                     }
-
-                    console.log('选择的在线设备是2：', imeiNew)
                     return imeiNew;
                 },
 
@@ -988,7 +979,6 @@ export default {
                 },
 
                 getToken() {
-                    console.log('getToken操作')
                     let localstroage = window.localStorage;
                     let token = localstroage.getItem('token');
                     this.extraData = {
@@ -997,12 +987,10 @@ export default {
                 },
 
                 handleSuccess(res, file) {
-                    console.log('handleSuccess操作', file)
                     this.fileName = file.response.data.fileName;
                 },
 
                 handleFormatError(file) {
-                    console.log('handleFormatError操作', file)
                     this.$Notice.warning({
                         title: this.$t("message.tipWarnFileWrong"),
                         desc: file.name + ', ' + this.$t("message.tipWarnFileWrongCsv")

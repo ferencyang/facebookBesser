@@ -222,11 +222,11 @@ a.trash-list:hover {
                                 <Icon slot="dot" type="ios-clock-outline"></Icon>
                                 <span>
                           <p class="time">{{itemDelay.doTime}}
-                            <Button type="text" style="float:right;" @click="cancleDelayTaskOne(idxDelay)" v-if="showDeviceDelay === idxDelay">取消任务</Button>
+                            <Button type="text" style="float:right;" @click="cancleDelayTaskOne(idxDelay)" v-if="showDeviceDelay === idxDelay">{{$t('message.cancelTask')}}</Button>
 
                           </p>
                           <p class="content">
-                            <label class="content-dec">{{itemDelay.imei.length}}个账号</label> |
+                            <label class="content-dec">{{itemDelay.imei.length}}{{$t('message.taskListOneAccount')}}</label> |
                             <label class="content-dec">
                               {{itemDelay.taskType}}
                             </label>
@@ -247,12 +247,12 @@ a.trash-list:hover {
                         </Timeline>
                         <p v-if="dalayTaskListAllPage.length !== 0">
                             <a class="trash-list" @click="cancleDelayTaskAll">
-                                <Icon type="stop" style="padding-right:5px;padding-left:20px;"></Icon>全部取消
+                                <Icon type="stop" style="padding-right:5px;padding-left:20px;"></Icon>{{$t('message.cancelAll')}}
                             </a>
                             <Page :total="pageTotalDelay" :page-size="5" @on-change="tapPageDelay" size="small" style="float:right;"></Page>
                         </p>
                         <p v-if="dalayTaskListAllPage.length === 0" style="text-align:center;">
-                            暂无延迟任务
+                            {{$t('message.NoDelayTask')}}
                         </p>
                     </div>
 
@@ -333,7 +333,6 @@ export default {
                             }
                         })
                         .then(response => {
-                            console.log('延迟任务的数据: ', response.data)
                             if (response.data.code === 200) {
 
                                 this.delayTaskListAll = response.data.data;
@@ -364,49 +363,49 @@ export default {
 
                             switch (delayTaskPageOne[i].tasks[j].type) {
                                 case 33:
-                                    taskTypeGet = taskTypeGet + ' 发帖';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.post');
                                     break;
                                 case 49:
-                                    taskTypeGet = taskTypeGet + ' 搜索关键词加友';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.addFriendKey');
                                     break;
                                 case 50:
-                                    taskTypeGet = taskTypeGet + ' 搜索加友';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.friendTitleOne');
                                     break;
                                 case 51:
-                                    taskTypeGet = taskTypeGet + ' 推荐加友';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.friendTitleThree');
                                     break;
                                 case 52:
-                                    taskTypeGet = taskTypeGet + ' 添加好友的好友';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.addFriendTwo');
                                     break;
                                 case 53:
-                                    taskTypeGet = taskTypeGet + ' 通过好友请求';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.addFriendOK');
                                     break;
                                 case 54:
-                                    taskTypeGet = taskTypeGet + ' 导入好友';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.importingFriends');
                                     break;
                                 case 65:
-                                    taskTypeGet = taskTypeGet + ' 回复';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.replay');
                                     break;
                                 case 82:
-                                    taskTypeGet = taskTypeGet + ' 刷新个人时间线';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.renovatePersonalTimeLine');
                                     break;
                                 case 83:
-                                    taskTypeGet = taskTypeGet + ' 查看动态';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.ViewDynamics');
                                     break;
                                 case 84:
-                                    taskTypeGet = taskTypeGet + ' 随机点赞';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.randomUpvote');
                                     break;
                                 case 85:
-                                    taskTypeGet = taskTypeGet + ' 查看新闻';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.viewNews');
                                     break;
                                 case 86:
-                                    taskTypeGet = taskTypeGet + ' 搜索';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.search');
                                     break;
                                 case 87:
-                                    taskTypeGet = taskTypeGet + ' 在时间线上分享';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.timeLineShare');
                                     break;
                                 default:
-                                    taskTypeGet = taskTypeGet + ' 任务';
+                                    taskTypeGet = taskTypeGet + ' '+ this.$t('message.taskdetail');
                             }
                             // console.log('任务的名称: ', taskTypeGet)
                         }
@@ -463,7 +462,7 @@ export default {
                 },
 
                 cancleDelayTaskOne(idxDelay) {
-                    this.$Message.info('取消中...');
+                    this.$Message.info(this.$t('message.canceling'));
                     let mainIdGet = this.dalayTaskListAllPage[idxDelay].mainId;
                     let localstroage = window.localStorage;
                     let token = localstroage.getItem('token');
@@ -489,7 +488,7 @@ export default {
                         .then(response => {
                             console.log('取消延迟任务: ', response.data)
                             if (response.data.code === 200) {
-                                this.$Message.success('取消成功');
+                                this.$Message.success(this.$t('message.cancelSuccess'));
                                 this.dalayTaskListAllPage.splice(idxDelay, 1);
 
                             }
@@ -548,7 +547,7 @@ export default {
                     })
                         .then(res => {
                             if (res.data.code === 200) {
-                                this.$Message.success('清除任务列表成功');
+                                this.$Message.success(this.$t('message.delTaskListSuccess'));
                                 this.taskListAll = [];
                                 this.taskListAllArr = [];
 
@@ -561,12 +560,11 @@ export default {
                                 let nameKeyNow = 'taskList' + mobileNow;
                                 localstroage.setItem(nameKeyNow, taskListAllLocalString);
                             } else {
-                                this.$Message.warning('清除任务列表异常', res)
+                                this.$Message.warning(this.$t('message.delTaskListError'), res)
                             }
                         })
                         .catch(err => {
-                            console.error('清除任务列表异常', err)
-                            this.$Message.error('清除任务列表异常')
+                            this.$Message.error(this.$t('message.delTaskListError'))
                         })
                 }
 

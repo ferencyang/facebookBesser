@@ -69,7 +69,7 @@
 
                                     </div>
                                     <div v-else>
-                                        <h3 style="padding-top:15px;color:#888888;">暂未绑定设备</h3>
+                                        <h3 style="padding-top:15px;color:#888888;">{{$t('message.noBindDevice')}}</h3>
                                     </div>
                                 </RadioGroup>
 
@@ -94,7 +94,7 @@
                                             <Input type="text" v-model="item.value" :placeholder="$t('message.settingAccountNumPlaceholder')"></Input>
                                         </Col>
                                         <Col span="4" offset="1">
-                                            <Button type="ghost" @click="handleRemove(index)">{{ $t("message.delect") }}</Button>
+                                            <Button type="ghost" @click="handleRemove(index)">{{ $t("message.delete") }}</Button>
                                         </Col>
                                     </Row>
                                 </FormItem>
@@ -266,7 +266,6 @@ export default {
       let devicesListAllLocal = localstroage.getItem("devicesListAll");
       if (devicesListAllLocal !== "") {
         this.devicesListAll = devicesListAllLocal.split(",");
-        console.log("设备数组：", this.devicesListAll);
       }
     },
     getInfo: function() {
@@ -286,7 +285,7 @@ export default {
                   }
               }
           }
-          console.log('选择的在线设备是1：', imei)
+
           var imeiNew = [];
           for (let i = 0, l = imei.length; i < l; i++) {
               for (let j = i + 1; j < l; j++)
@@ -294,7 +293,6 @@ export default {
               imeiNew.push(imei[i]);
           }
 
-          console.log('选择的在线设备是2：', imeiNew)
           return imeiNew;
       },
     checkAppUpdate() {
@@ -323,7 +321,7 @@ export default {
             status: 0,
             body: bodyStr
         });
-        this.$Message.info('已提交更新请求')
+        this.$Message.info(this.$t('message.submitUpdateRequest'))
     },
     tapDeviceDel(idx) {
       let network = window.sessionStorage.getItem("network");
@@ -333,7 +331,7 @@ export default {
       } else {
         this.$Modal.confirm({
           title: this.$t("message.settingAccountTitle"),
-          content: this.$t("message.settingAccountDec"),
+          content: this.$t("message.unbindAccountDec"),
           onOk: () => {
             let localstroage = window.localStorage;
             let mobileEnd = localstroage.getItem("mobile");
@@ -366,10 +364,9 @@ export default {
               }
             }).then(
               response => {
-                console.log("返回的数据: ", response.data);
                 if (response.data.code === 200) {
                   this.$Notice.success({
-                    title: "设备解绑成功"
+                    title: this.$t('message.unbindSuccess')
                   });
 
                   this.devicesListAll.splice(idx, 1);
@@ -386,7 +383,7 @@ export default {
                   });
                 } else {
                   this.$Notice.warning({
-                    title: "设备解绑失败",
+                    title: this.$t('message.unbindFail'),
                     desc: imei + response.data.msg
                   });
                 }
@@ -411,7 +408,6 @@ export default {
       } else {
         this.$refs[name].validate(valid => {
           if (valid) {
-            console.log("提交的数据:", this.formDynamic);
             let localstroage = window.localStorage;
             let mobileEnd = localstroage.getItem("mobile");
             let token = localstroage.getItem("token");
@@ -449,10 +445,9 @@ export default {
                   }
                 }).then(
                   response => {
-                    console.log("返回的数据: ", response.data);
                     if (response.data.code === 200) {
                       this.$Notice.success({
-                        title: "设备绑定成功"
+                        title: this.$t('message.tipSuccessSettingAccountOk')
                       });
 
                       this.formDynamic.items[idx].status = 0;
@@ -469,7 +464,7 @@ export default {
                       });
                     } else {
                       this.$Notice.warning({
-                        title: "设备绑定失败",
+                        title: this.$t('message.tipErrorSettingAccountFail'),
                         desc: imei + response.data.msg
                       });
                     }
@@ -569,7 +564,6 @@ export default {
               }
             }).then(
               response => {
-                console.log("密码修改返回的数据: ", response.data);
                 if (response.data.code === 200) {
                   this.$Message.success(this.$t("message.tipSuccessGroupEdit"));
                   this.formCustom = {

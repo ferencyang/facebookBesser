@@ -81,7 +81,7 @@
 
     <div style="overflow:auto;height:580px;">
         <Tabs v-model="analysisTapPaneVal" size="small" @on-click="analysisTapPane" type="card">
-            <TabPane label="基本数据" name="tab1">
+            <TabPane :label="$t('message.baseData')" name="tab1">
                 <div v-if="analysisTapPaneVal == 'tab1'">
                     <Row style="background:#eee;padding: 10px">
                         <Col span="8">
@@ -89,9 +89,9 @@
 
                             <div class="card_top">
                                 <div class="card_top_title">
-                                    <span>设备信息</span>
+                                    <span>{{$t('message.deviceInfo')}}</span>
                                     <span class="card_top_icon">
-                        <Tooltip content="绑定的设备信息" placement="left-start">
+                        <Tooltip :content="$t('message.bindDeviceInfo')" placement="left-start">
                             <Icon type="ios-information-outline" style="font-size:16px;"></Icon>
                         </Tooltip>
                       </span>
@@ -105,18 +105,18 @@
                             <div class="card_content" style="padding-top:8px;">
                                 <p>
                                     <Icon type="record" style="padding-left:0px;padding-right:8px;color:#00D01F"></Icon>
-                                    正常在线 {{deviceListAllOnline.length}}
+                                    {{$t('message.online')}} {{deviceListAllOnline.length}}
                                 </p>
                                 <p>
                                     <Icon type="record" style="padding-left:0px;padding-right:8px;color:#FF0000"></Icon>
-                                    异常离线 {{deviceListAllOffline.length}}
+                                    {{$t('message.offline')}} {{deviceListAllOffline.length}}
                                 </p>
                             </div>
 
                             <div class="card_footer">
                                 <div class="card_fooder_dec">
                         <span>
-                        {{deviceListAllOffline.length === 0 ? '所有设备运转正常' : ('有' + deviceListAllOffline.length + '个设备异常')}}
+                        {{deviceListAllOffline.length === 0 ? $t('message.deviceStateOk') : (deviceListAllOffline.length + $t('message.deviceStateWrong'))}}
                       </span>
                                 </div>
                             </div>
@@ -129,9 +129,9 @@
 
                             <div class="card_top">
                                 <div class="card_top_title">
-                                    <span>好友总数</span>
+                                    <span>{{$t('message.friendNum')}}</span>
                                     <span class="card_top_icon">
-                    <Tooltip content="所有账号的好友数量总计" placement="left-start">
+                    <Tooltip :content="$t('message.allAccountFriendCount')" placement="left-start">
                         <Icon type="ios-information-outline" style="font-size:16px;"></Icon>
                     </Tooltip>
                   </span>
@@ -144,19 +144,19 @@
 
                             <div class="card_content" style="padding-top:8px;">
                                 <p>
-                                    <span style="font-weight:300;">周同比</span> <span
+                                    <span style="font-weight:300;">{{$t('message.weeklyData')}}</span> <span
                                         style="width:20px;">{{weekrateAll}}</span>
                                     <Icon type="arrow-up-b" style="padding-left:8px;color:#FF0000"></Icon>
                                 </p>
                                 <p>
-                                    <span style="font-weight:300;">日环比</span> <span
+                                    <span style="font-weight:300;">{{$t('message.dayData')}}</span> <span
                                         style="width:20px;">{{dayrateAll}}</span>
                                     <Icon type="arrow-down-b" style="padding-left:8px;color:#00D01F"></Icon>
                                 </p>
                             </div>
                             <div class="card_footer">
                                 <div class="card_fooder_dec">
-                                    <span>日均增长量 {{dayaddAll}}</span>
+                                    <span>{{$t('message.dailyAverageGrowth')}} {{dayaddAll}}</span>
                                 </div>
                             </div>
 
@@ -169,9 +169,9 @@
 
                             <div class="card_top">
                                 <div class="card_top_title">
-                                    <span>任务执行情况</span>
+                                    <span>{{$t('message.taskImplementation')}}</span>
                                     <span class="card_top_icon">
-                    <Tooltip content="设备执行任务成功的概率" placement="left-start">
+                    <Tooltip :content="$t('message.taskSuccessProportion')" placement="left-start">
                         <Icon type="ios-information-outline" style="font-size:16px;"></Icon>
                     </Tooltip>
                   </span>
@@ -191,9 +191,9 @@
                             <div class="card_footer">
                                 <div class="card_fooder_dec">
                                     <Icon type="android-checkbox-blank" style="padding-right:3px;color:#3AB9EE"></Icon>
-                                    <span style="width:180px;font-weight:400;padding-right:8px;">成功   {{taskCount.successNum}}</span>
+                                    <span style="width:180px;font-weight:400;padding-right:8px;">{{$t('message.success')}}   {{taskCount.successNum}}</span>
                                     <Icon type="android-checkbox-blank" style="padding-right:3px;color:#F3F3F3"></Icon>
-                                    <span style="width:180px;font-weight:400">失败   {{taskCount.failNum}}</span>
+                                    <span style="width:180px;font-weight:400">{{$t('message.error')}}   {{taskCount.failNum}}</span>
                                 </div>
                             </div>
 
@@ -210,7 +210,7 @@
                                 <Col span="8">
 
                                 <Select v-model="deviceOneVal" @on-change="getImeiFriend" clearable filterable
-                                        placeholder="请选择或者搜索设备">
+                                        :placeholder="$t('message.tipSelectDevice')">
                                     <Option v-for="(item,index) in devicesListAll" :value="item" :key="index">{{ item
                                         }}
                                     </Option>
@@ -220,7 +220,7 @@
 
                                     <div class="card_top">
                                         <div class="card_top_title" style="margin-bottom:15px;">
-                                            <span>该设备好友总数</span>
+                                            <span>{{$t('message.currentDeviceFriend')}}</span>
                                         </div>
                                         <div class="card_top_num">
                                             {{friendOfImeiCount}}
@@ -229,17 +229,17 @@
 
                                     <div class="card_content">
                                         <p>
-                                            <label style="font-weight:400;width:200px;">周同比 {{weekrate}}</label>
+                                            <label style="font-weight:400;width:200px;">{{$t('message.weeklyData')}} {{weekrate}}</label>
                                             <Icon type="arrow-up-b" style="padding-left:8px;color:#FF0000"></Icon>
                                         </p>
                                         <p>
-                                            <label style="width:180px;font-weight:400">日环比 {{dayrate}}</label>
+                                            <label style="width:180px;font-weight:400">{{$t('message.dayData')}} {{dayrate}}</label>
                                             <Icon type="arrow-down-b" style="padding-left:8px;color:#00D01F"></Icon>
                                         </p>
                                     </div>
                                     <div class="card_footer" style="width:180px;">
                                         <div class="card_fooder_dec">
-                                            <span>日均增长量 {{dayadd}}</span>
+                                            <span>{{$t('message.dailyAverageGrowth')}} {{dayadd}}</span>
                                         </div>
                                     </div>
 
@@ -263,13 +263,13 @@
                         <Col span="24">
                         <Card :bordered="false" style="height:400px;margin: 0 8px;">
                             <Tabs v-model="tabPaneVal" size="small" @on-click="tapTabPane">
-                                <TabPane label="发帖" name="tab1"></TabPane>
-                                <TabPane label="加友" name="tab2"></TabPane>
-                                <TabPane label="互动" name="tab3"></TabPane>
-                                <TabPane label="养号" name="tab4"></TabPane>
+                                <TabPane :label="$t('message.post')" name="tab1"></TabPane>
+                                <TabPane :label="$t('message.addfriends')" name="tab2"></TabPane>
+                                <TabPane :label="$t('message.reply')" name="tab3"></TabPane>
+                                <TabPane :label="$t('message.robot')" name="tab4"></TabPane>
                                 <ButtonGroup slot="extra" size="small">
-                                    <Button :type="dateWeekVal" @click.native="tapDateWeek">7天</Button>
-                                    <Button :type="dateMonthVal" @click.native="tapDateMonth">30天</Button>
+                                    <Button :type="dateWeekVal" @click.native="tapDateWeek">{{$t('message.sevenDays')}}</Button>
+                                    <Button :type="dateMonthVal" @click.native="tapDateMonth">{{$t('message.thirtyDays')}}</Button>
                                 </ButtonGroup>
                             </Tabs>
 
@@ -284,13 +284,13 @@
                     </Row>
                 </div>
             </TabPane>
-            <TabPane label="主页分析" name="tab2">
+            <TabPane :label="$t('message.homePageAnalysis')" name="tab2">
                 <div v-if="analysisTapPaneVal == 'tab2'">
                     <div>
                         <Row style="background:#eee;padding: 10px">
                             <Col span="24">
                             <div style="padding: 8px;text-align: center">
-                                <div>主页管理</div>
+                                <div>{{$t('message.homePageManage')}}</div>
                             </div>
                             </Col>
                             <Col span="8" style="height: 60px" v-for="(item,index) in homepages">
@@ -305,7 +305,7 @@
                             <Col span="8" style="border-radius: 6px;height: 60px" v-if="homepages.length <6">
                             <div @click="addHomePageBtn" class="homepageName" style="background: #fff">
                                 <Icon type="plus-circled" style="color:#00D01F"></Icon>
-                                <span style="color: #1c2438">添加主页</span>
+                                <span style="color: #1c2438">{{$t('message.homePageAdd')}}</span>
                             </div>
                             </Col>
                         </Row>
@@ -313,43 +313,42 @@
 
 
                     <Tabs v-model="homePagePaneVal" size="small" @on-click="homePagePane">
-                        <TabPane label="粉丝数" name="tab1"></TabPane>
-                        <TabPane label="活跃度" name="tab2"></TabPane>
-                        <TabPane label="帖子数" name="tab3"></TabPane><!--
+                        <TabPane :label="$t('message.fansNum')" name="tab1"></TabPane>
+                        <TabPane :label="$t('message.activity')" name="tab2"></TabPane>
+                        <TabPane :label="$t('message.totalPosts')" name="tab3"></TabPane><!--
                         <TabPane label="评论数" name="tab4"></TabPane>
                         <TabPane label="点赞数" name="tab5"></TabPane>
                         <TabPane label="分享数" name="tab6"></TabPane>
                         <TabPane label="浏览数" name="tab7"></TabPane>-->
                         <ButtonGroup slot="extra" size="small">
-                            <Button :type="dateWeekVal" @click.native="tapDateWeek">7天</Button>
-                            <Button :type="dateMonthVal" @click.native="tapDateMonth">30天</Button>
+                            <Button :type="dateWeekVal" @click.native="tapDateWeek">{{$t('message.sevenDays')}}</Button>
+                            <Button :type="dateMonthVal" @click.native="tapDateMonth">{{$t('message.thirtyDays')}}</Button>
                         </ButtonGroup>
                     </Tabs>
                     <div style="position:relative;text-align: center">
-                        <div>主页活跃度</div>
+                        <div>{{$t('message.homePageData')}}</div>
                     </div>
                     <div>
-                        <div style="width: 100%; height:300px;">
-                            <IEcharts :option="homepageDataChange"></IEcharts>
+                        <div id="homepage" style="width: 100%; height:300px;">
                         </div>
                     </div>
                 </div>
             </TabPane>
         </Tabs>
         <!-- 主页添加 -->
-        <Modal v-model="modalAddHome" :title="'添加主页'">
+        <Modal v-model="modalAddHome" :title="$t('message.homePageAdd')">
             <Form ref="addHomePageFormValidate" :model="addHomeData" label-position="right" :label-width="80"
                   :rules="ruleValidate">
-                <FormItem :label="'主页名称'" prop="name">
-                    <Input v-model="addHomeData.name" placeholder="输入需要添加的主页名称"></Input>
+                <FormItem :label="$t('message.homePageName')" prop="name">
+                    <Input v-model="addHomeData.name" :placeholder="$t('message.homePageNameTip')"></Input>
                     <RadioGroup v-model="homepageTypeOption">
-                        <Radio label="自己主页"></Radio>
-                        <Radio label="同行主页"></Radio>
+                        <Radio :label="$t('message.selfHomePage')"></Radio>
+                        <Radio :label="$t('message.otherHomePage')"></Radio>
                     </RadioGroup>
                 </FormItem>
             </Form>
             <div slot="footer">
-                <Button @click="modalAddHome = false">取消</Button>
+                <Button @click="modalAddHome = false">{{$t('message.cancel')}}</Button>
                 <Button type="primary" :loading="loading" @click="homePageEidt(0)">{{$t('message.confirm')}}</Button>
             </div>
         </Modal>
@@ -363,6 +362,7 @@
     import IEcharts from 'vue-echarts-v3/src/lite.js';
     import 'echarts/lib/chart/line';
     import 'echarts/lib/chart/bar';
+    let echarts = require('echarts/lib/echarts');
     // import 'echarts/lib/chart/pie';
     // import 'echarts/lib/chart/scatter';
     // import 'echarts/lib/chart/radar';
@@ -413,7 +413,7 @@
             tabPaneVal: 'tab1',
             analysisTapPaneVal: 'tab1',
             homePagePaneVal: 'tab1',
-            homepageTypeOption: "自己主页",
+            homepageTypeOption: "",
             devicesListAll: [],
             deviceListAllOnline: [],
             deviceListAllOffline: [],
@@ -431,7 +431,8 @@
             taskCount: {},
             addFriendBar: {
                 title: {
-                    text: '操作',
+                    text: "",
+                    padding: [20, 25],
                     textStyle: {
                         fontSize: 14
                     }
@@ -447,7 +448,7 @@
                     }
                 },
                 grid: {
-                    left: '3%',
+                    left: '5px',
                     right: '4%',
                     bottom: '3%',
                     containLabel: true
@@ -464,7 +465,7 @@
                     type: 'value'
                 }],
                 series: [{
-                    name: '操作次数',
+                    name: "",
                     type: 'bar',
                     barWidth: '60%',
                     data: [10, 52, 200, 334, 390, 330, 220]
@@ -472,8 +473,8 @@
             },
             friendTotalChange: {
                 title: {
-                    text: '最近7天好友数量增长趋势',
-                    padding: [3, 0],
+                    text: "",
+                    padding: [20, 20],
                     textStyle: {
                         fontSize: 14
                     }
@@ -505,7 +506,7 @@
                     type: 'value'
                 }],
                 series: [{
-                    name: '好友增长量',
+                    name: "",
                     type: 'line',
                     itemStyle: {
                         normal: {
@@ -520,7 +521,7 @@
                     symbolSize: "0",
                     symbol: "circle",
                     smooth: true,
-                    stack: '总量',
+                    stack: "",
                     areaStyle: {
                         normal: {}
                     },
@@ -547,7 +548,7 @@
                 },
                 color: ['#59cb59', '#08c4b3', '#3996e3', '#9180f3', '#db61da', '#db61da'],
                 grid: {
-                    left: '0',
+                    left: '10px',
                     right: '20px    ',
                     bottom: '3%',
                     containLabel: true
@@ -560,17 +561,7 @@
                 yAxis: {
                     type: 'value'
                 },
-                series: [{
-                    name: '操作次数',
-                    type: 'line',
-                    barWidth: '60%',
-                    data: []
-                }, {
-                    name: 'asda',
-                    type: 'line',
-                    barWidth: '60%',
-                    data: []
-                }]
+                series: []
             },
             homepages: [],
             modalAddHome: false,
@@ -603,6 +594,12 @@
             }
         }),
         mounted() {
+            this.homepageTypeOption= this.$t('message.selfHomePage');
+            this.addFriendBar.title.text= this.$t('message.labelOperate');
+            this.addFriendBar.series.name= this.$t('message.labelOperateNum');
+            this.friendTotalChange.title.text= this.$t('message.lastWeekFriendsData');
+            this.friendTotalChange.series.name= this.$t('message.friendGrowth');
+            this.friendTotalChange.series.stack= this.$t('message.Count');
             this.getDevice();
             this.getFacebookData();
             this.getTasksCount();
@@ -723,6 +720,12 @@
             },
             analysisTapPane(val) {
                 this.analysisTapPaneVal = val;
+                if(this.analysisTapPaneVal == "tab2"){
+                    let self =this
+                    setTimeout(function () {
+                        self.homePagePane();
+                    },0)
+                }
             },
             tapDeviceMenu(val) {
                 this.deviceOneVal = val;
@@ -873,7 +876,7 @@
                                 account: account,
                                 type: type
                             };
-                            if (this.homepageTypeOption == "自己主页") {
+                            if (this.homepageTypeOption == this.$t('message.')) {
                                 data.myhomepage = homepage;
                                 data.viehomepage = "";
                                 data.opetype = 0;
@@ -1061,6 +1064,9 @@
                                         self.homePagePane()
                                     }
                                 });
+                                if( response.data.data.length){
+                                    self.homePagePane()
+                                }
                             }
                         }
                     }, response => {
@@ -1089,6 +1095,7 @@
                 let dayArr = this.getlastDaysDate(days);
                 self.homepageDataChange.xAxis.data = dayArr;
                 if(self.homePagePaneVal === "tab1" || !self.homePagePaneVal){
+                    self.homepageDataChange.series = self.homepageDataChange.series.slice(0,self.homepage.concerns.length)
                     self.homepage.concerns.forEach(function (item,index) {
                         self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
                     });
@@ -1097,27 +1104,40 @@
                     self.homepage.activenum.forEach(function (item,index) {
                         self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
                     });
+                    self.homepageDataChange.series = self.homepageDataChange.series.slice(0,self.homepage.activenum.length)
                 }
                 if(self.homePagePaneVal === "tab3"){
                     self.homepage.totalposts.forEach(function (item,index) {
                         self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
                     });
+                    self.homepageDataChange.series = self.homepageDataChange.series.slice(0,self.homepage.totalposts.length)
                 }else if(self.homePagePaneVal === "tab4"){
                     self.homepage.comment.forEach(function (item,index) {
                         self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
                     });
+                    self.homepageDataChange.series = self.homepageDataChange.series.slice(0,self.homepage.comment.length)
                 }else if(self.homePagePaneVal === "tab5"){
                     self.homepage.praise.forEach(function (item,index) {
                         self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
                     });
+                    self.homepageDataChange.series = self.homepageDataChange.series.slice(0,self.homepage.praise.length)
                 }else if(self.homePagePaneVal === "tab6"){
                     self.homepage.share.forEach(function (item,index) {
                         self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
                     });
+                    self.homepageDataChange.series = self.homepageDataChange.series.slice(0,self.homepage.share.length)
                 }else if(self.homePagePaneVal == "tab7"){
                     self.homepage.visits.forEach(function (item,index) {
                         self.homepageDataChange.series[index].data = self.initDataArray(item).slice(-days)
                     });
+                    self.homepageDataChange.series = self.homepageDataChange.series.slice(0,self.homepage.visits.length)
+                }
+                if(document.getElementById('homepage')){
+                    let myChart =echarts.init(document.getElementById('homepage'));
+                    myChart.setOption(self.homepageDataChange)
+                    window.onresize=function(){
+                        myChart.resize();
+                    }
                 }
             },
             initDataArray(arr) {

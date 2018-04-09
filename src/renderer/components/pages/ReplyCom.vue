@@ -20,17 +20,17 @@
     <p slot="title" style="height:35px;">
       <!-- {{ $t("message.replayTitle") }} -->
       <ButtonGroup>
-        <Button :type="chooseCategory === 'reply' ? 'primary' : 'ghost'" @click="tapBtn('reply')">回复</Button>
-        <Button :type="chooseCategory === 'like' ? 'primary' : 'ghost'" @click="tapBtn('like')">点赞</Button>
-        <Button :type="chooseCategory === 'forward' ? 'primary' : 'ghost'" @click="tapBtn('forward')">转发</Button>
-        <Button :type="chooseCategory === 'follow' ? 'primary' : 'ghost'" @click="tapBtn('follow')">关注</Button>
+        <Button :type="chooseCategory === 'reply' ? 'primary' : 'ghost'" @click="tapBtn('reply')">{{$t('message.replay')}}</Button>
+        <Button :type="chooseCategory === 'like' ? 'primary' : 'ghost'" @click="tapBtn('like')">{{$t('message.upvote')}}</Button>
+        <Button :type="chooseCategory === 'forward' ? 'primary' : 'ghost'" @click="tapBtn('forward')">{{$t('message.repost')}}</Button>
+        <Button :type="chooseCategory === 'follow' ? 'primary' : 'ghost'" @click="tapBtn('follow')">{{$t('message.follow')}}</Button>
       </ButtonGroup>
     </p>
     <a href="#" slot="extra" v-if="chooseCategory === 'reply'">
-      <Button type="ghost" v-on:click="tapModelSchedule" v-if="showBtn">
+      <Button type="ghost"  size="large" v-on:click="tapModelSchedule" v-if="showBtn">
         <Icon type="clock" style="padding-right:5px;"></Icon>{{ $t("message.replayBtnClock") }}
       </Button>
-      <Button type="primary" v-on:click="tapReplayCom(0, 0)" v-if="showBtn">
+      <Button type="primary" size="large" v-on:click="tapReplayCom(0, 0)" v-if="showBtn">
         <Icon type="paper-airplane" style="padding-right:5px;"></Icon>{{ $t("message.replayBtnNow") }}
       </Button>
 
@@ -40,61 +40,61 @@
       </Button>
     </a>
     <a href="#" slot="extra" v-if="chooseCategory === 'like'">
-      <Button type="ghost" size="small" v-on:click="tapModelSchedule" v-if="showBtn">
-        <Icon type="clock" style="padding-right:5px;"></Icon>定时点赞
+      <Button type="ghost" size="large" v-on:click="tapModelSchedule" v-if="showBtn">
+        <Icon type="clock" style="padding-right:5px;"></Icon>{{$t("message.timingUpvote")}}
       </Button>
-      <Button type="primary" size="small" v-on:click="tapLike(0, 0)" v-if="showBtn">
-        <Icon type="paper-airplane" style="padding-right:5px;"></Icon>立即点赞
+      <Button type="primary" size="large" v-on:click="tapLike(0, 0)" v-if="showBtn">
+        <Icon type="paper-airplane" style="padding-right:5px;"></Icon>{{$t("message.promptlyUpvote")}}
       </Button>
 
       <!-- <Button type="primary" size="small" @click="tapReplayCom" v-if="showBtn">{{ $t("message.replayBtn") }}</Button> -->
-      <Button type="primary" size="small" :loading="true" v-else>
+      <Button type="primary" size="large" :loading="true" v-else>
         {{ $t("message.taskHoldTextOne") }}，{{timecount}}{{ $t("message.taskholdTextTwo") }}
       </Button>
     </a>
     <a href="#" slot="extra" v-if="chooseCategory === 'forward'">
-      <Button type="ghost" size="small" v-on:click="tapModelSchedule" v-if="showBtn">
-        <Icon type="clock" style="padding-right:5px;"></Icon>定时转发
+      <Button type="ghost" size="large" v-on:click="tapModelSchedule" v-if="showBtn">
+        <Icon type="clock" style="padding-right:5px;"></Icon>{{ $t("message.timingRepost") }}
       </Button>
-      <Button type="primary" size="small" v-on:click="tapForward(0, 0)" v-if="showBtn">
-        <Icon type="paper-airplane" style="padding-right:5px;"></Icon>立即转发
+      <Button type="primary" size="large" v-on:click="tapForward(0, 0)" v-if="showBtn">
+        <Icon type="paper-airplane" style="padding-right:5px;"></Icon>{{ $t("message.promptlyRepost") }}
       </Button>
 
       <!-- <Button type="primary" size="small" @click="tapReplayCom" v-if="showBtn">{{ $t("message.replayBtn") }}</Button> -->
-      <Button type="primary" size="small" :loading="true" v-else>
+      <Button type="primary" size="large" :loading="true" v-else>
         {{ $t("message.taskHoldTextOne") }}，{{timecount}}{{ $t("message.taskholdTextTwo") }}
       </Button>
     </a>
     <a href="#" slot="extra" v-if="chooseCategory === 'follow'">
-      <Button type="ghost" size="small" v-on:click="tapModelSchedule" v-if="showBtn">
-        <Icon type="clock" style="padding-right:5px;"></Icon>定时关注
+      <Button type="ghost" size="large" v-on:click="tapModelSchedule" v-if="showBtn">
+        <Icon type="clock" style="padding-right:5px;"></Icon>{{ $t("message.timingFollow") }}
       </Button>
-      <Button type="primary" size="small" v-on:click="tapFollow(0, 0)" v-if="showBtn">
-        <Icon type="paper-airplane" style="padding-right:5px;"></Icon>立即关注
+      <Button type="primary" size="large" v-on:click="tapFollow(0, 0)" v-if="showBtn">
+        <Icon type="paper-airplane" style="padding-right:5px;"></Icon>{{ $t("message.promptlyFollow") }}
       </Button>
 
       <!-- <Button type="primary" size="small" @click="tapReplayCom" v-if="showBtn">{{ $t("message.replayBtn") }}</Button> -->
-      <Button type="primary" size="small" :loading="true" v-else>
+      <Button type="primary" size="large" :loading="true" v-else>
         {{ $t("message.taskHoldTextOne") }}，{{timecount}}{{ $t("message.taskholdTextTwo") }}
       </Button>
     </a>
     <div v-if="chooseCategory === 'reply'">
       <RadioGroup v-model="replyModelVal" style="padding-bottom:15px;">
         <Radio label="postTimeLine">
-          <span>时间线</span>
+          <span>{{$t('message.timeLine')}}</span>
         </Radio>
         <Radio label="postGroup">
-          <span>小组</span>
+          <span>{{$t('message.group')}}</span>
         </Radio>
         <Radio label="postPage">
-          <span>主页
-            <Input v-model="replyPageInput" placeholder="输入主页名称..." style="padding-left:8px;width: 200px;" v-if="replyModelVal === 'postPage'"></Input>
-            <Input v-model="replyPageNumber" placeholder="输入主页帖子数" style="padding-left:8px;width: 200px;" v-if="replyModelVal === 'postPage'"></Input>
+          <span>{{ $t("message.homepage") }}
+            <Input v-model="replyPageInput" :placeholder="$t('message.selectHomepageTip')" style="padding-left:8px;width: 200px;" v-if="replyModelVal === 'postPage'"></Input>
+            <Input v-model="replyPageNumber" :placeholder="$t('message.selectPostTip')" style="padding-left:8px;width: 200px;" v-if="replyModelVal === 'postPage'"></Input>
           </span>
         </Radio>
       </RadioGroup>
       <div style="float: right">
-        <Select  filterable  :placeholder="'请选择模板类别'" @on-change="getReplayComList">
+        <Select  filterable  :placeholder='$t("message.modelType")' @on-change="getReplayComList">
           <Option v-for="item in selectreplayGroupList" :value="item.id" :key="item.id"  >
             <span >{{ item.name }}</span>
           </Option>
@@ -109,10 +109,10 @@
         </label>
         <label style="float:right">
           <a @click="tapAddReplayComDel" style="margin-left:10px;">
-            <Icon type="trash-a" style="padding-right:5px;"></Icon>删除
+            <Icon type="trash-a" style="padding-right:5px;"></Icon>{{ $t("message.delete") }}
           </a>
           <a @click="modalReplayGroupList = true" style="margin-left:10px;">
-            <Icon type="navicon" style="padding-right:5px;"></Icon>分类管理
+            <Icon type="navicon" style="padding-right:5px;"></Icon>{{$t("message.modelTypeManage")}}
           </a>
           <a @click="tapAddReplayCom" style="margin-left:10px;">
             <Icon type="android-add" style="padding-right:5px;"></Icon>{{ $t("message.replayAddText") }}
@@ -123,15 +123,15 @@
     <div v-if="chooseCategory === 'like'">
       <RadioGroup v-model="likeModelVal">
         <Radio label="postTimeLine">
-          <span>时间线</span>
+          <span>{{$t('message.timeLine')}}</span>
         </Radio>
         <Radio label="postGroup">
-          <span>小组</span>
+          <span>{{$t('message.group')}}</span>
         </Radio>
         <Radio label="postPage">
-          <span>主页
-            <Input v-model="likePageInput" placeholder="输入主页名称..." style="padding-left:8px;width: 200px;" v-if="likeModelVal === 'postPage'"></Input>
-            <Input v-model="likePageNumber" placeholder="输入主页帖子数" style="padding-left:8px;width: 200px;" v-if="likeModelVal === 'postPage'"></Input>
+          <span>{{ $t("message.homepage") }}
+            <Input v-model="likePageInput" :placeholder="$t('message.selectHomepageTip')" style="padding-left:8px;width: 200px;" v-if="likeModelVal === 'postPage'"></Input>
+            <Input v-model="likePageNumber" :placeholder="$t('message.selectPostTip')" style="padding-left:8px;width: 200px;" v-if="likeModelVal === 'postPage'"></Input>
           </span>
         </Radio>
       </RadioGroup>
@@ -139,22 +139,22 @@
     <div v-if="chooseCategory === 'forward'">
       <RadioGroup v-model="forwardModelVal">
         <Radio label="postTimeLine">
-          <span>时间线</span>
+          <span>{{$t('message.timeLine')}}</span>
         </Radio>
         <Radio label="postGroup">
-          <span>小组</span>
+          <span>{{$t('message.group')}}</span>
         </Radio>
         <Radio label="postPage">
-          <span>主页
-            <Input v-model="forwardPageInput" placeholder="输入主页名称..." style="padding-left:8px;width: 200px;" v-if="forwardModelVal === 'postPage'"></Input>
-            <Input v-model="forwardPageNumber" placeholder="输入主页帖子数" style="padding-left:8px;width: 200px;" v-if="forwardModelVal === 'postPage'"></Input>
+          <span>{{ $t("message.homepage") }}
+            <Input v-model="forwardPageInput" :placeholder="$t('message.selectHomepageTip')" style="padding-left:8px;width: 200px;" v-if="forwardModelVal === 'postPage'"></Input>
+            <Input v-model="forwardPageNumber" :placeholder="$t('message.selectPostTip')" style="padding-left:8px;width: 200px;" v-if="forwardModelVal === 'postPage'"></Input>
           </span>
         </Radio>
       </RadioGroup>
     </div>
     <div v-if="chooseCategory === 'follow'">
-        <span>主页
-            <Input v-model="followPageInput" placeholder="输入主页名称..." style="padding-left:8px;width: 200px;" v-if="followModelVal === 'postPage'"></Input>
+        <span>{{ $t("message.homepage") }}
+            <Input v-model="followPageInput" :placeholder="$t('message.selectHomepageTip')" style="padding-left:8px;width: 200px;" v-if="followModelVal === 'postPage'"></Input>
         </span>
     </div>
 
@@ -179,10 +179,10 @@
     <!-- 模板组列表管理 -->
     <Modal v-model="modalReplayGroupList"  :title="$t('message.replayGroupListTitle')">
        <div style="text-align: left;n:right;margin-bottom:2px;float: left">
-        <Button type="error" icon="trash-a" size="small" @click="tapAddReplayGroupDel()">删除</Button>
+        <Button type="error" icon="trash-a" size="small" @click="tapAddReplayGroupDel()">{{$t('message.delete')}}</Button>
       </div>
        <div style="text-align:right;margin-bottom:2px">
-        <Button type="ghost" icon="plus" size="small" @click="modalReplayGroup = true">添加分类</Button>
+        <Button type="ghost" icon="plus" size="small" @click="modalReplayGroup = true">{{$t('message.replayGroupAddTitle')}}</Button>
       </div>
       <div>
         <Table highlight-row height="300" ref="replayGroupTable" @on-selection-change="tapGroupChoose" :columns="replayGroupColumn" :data="replayGroupList"></Table>
@@ -218,7 +218,7 @@
 
               </Col>
               <!-- <Col span="3" offset="1">
-                        <Button type="ghost" @click="handleScheduleDel(index)">{{ $t("message.delect") }}</Button></Button>
+                        <Button type="ghost" @click="handleScheduleDel(index)">{{ $t("message.delete") }}</Button></Button>
                     </Col> -->
             </Row>
           </FormItem>
@@ -284,7 +284,7 @@ export default {
         },
 
         {
-          title: this.$t('message.replayTableAction'),
+          title: this.$t('message.labelOperate'),
           key: 'action',
           width: 150,
           align: 'center',
@@ -306,7 +306,7 @@ export default {
                     }
                   }
                 },
-                this.$t('message.delect')
+                this.$t('message.delete')
               ),
               h(
                 'Button',
@@ -338,15 +338,15 @@ export default {
           align: 'index'
         },
         {
-          title: '分类',
+          title: this.$t('message.classification'),
           key: 'name'
         },
         {
-          title: '描述',
+          title: this.$t('message.replayAddComDesc'),
           key: 'desc'
         },
         {
-          title: this.$t('message.replayTableAction'),
+          title: this.$t('message.labelOperate'),
           key: 'action',
           width: 150,
           align: 'center',
@@ -368,7 +368,7 @@ export default {
                     }
                   }
                 },
-                this.$t('message.delect')
+                this.$t('message.delete')
               ),
               h(
                 'Button',
@@ -581,10 +581,11 @@ export default {
           if (res.data.code === 200) {
             this.replayGroupList = res.data.data;
             this.selectreplayGroupList = JSON.parse(JSON.stringify(res.data.data));
-            this.selectreplayGroupList.unshift({
+            let all = {
                 id:"all",
-                name:"所有分类"
-            });
+                name: this.$t('message.allClassification')
+            };
+            this.selectreplayGroupList.unshift(all);
           } else {
             console.warning('获取模版组列表失败', res)
           }
@@ -639,7 +640,6 @@ export default {
 
       this.$refs[nameVal].validate(valid => {
         if (valid) {
-          console.log('选择的日期：', this.formSchedule.items)
 
           let dateItems = this.formSchedule.items
           for (var i = 0; i < dateItems.length; i++) {
@@ -669,7 +669,7 @@ export default {
                   this.tapReplayCom(dateValNow, dateValChaTwo)
                 }
               } else {
-                this.$Message.warning('时间不能是过去的')
+                this.$Message.warning(this.$t('message.tipSelectDateWaring'))
               }
             }
           } //for
@@ -729,9 +729,9 @@ export default {
             .then(res => {
               if (res.data.code === 200) {
                 this.replayCom = []
-                this.$Message.success('操作成功')
+                this.$Message.success(this.$t('message.successfulOperation'))
               } else {
-                this.$Message.warning('操作失败', res)
+                this.$Message.warning(this.$t('message.failedOperation'), res)
               }
               this.getReplayComList()
               this.modalReplayCom = false
@@ -740,8 +740,7 @@ export default {
               this.modalReplayComEditingID = ''
             })
             .catch(err => {
-              console.error('操作异常', err)
-              this.$Message.error('操作异常')
+              this.$Message.error(this.$t('message.errorOperation'))
               this.modalReplayCom = false
               this.modalReplayComLoading = false
               this.modalReplayComEditing = false
@@ -805,10 +804,10 @@ export default {
             }
           }).then(res => {
               if (res.data.code === 200) {
-                this.$Message.success('操作成功')
+                this.$Message.success(this.$t('message.successfulOperation'))
                 this.replayGroupCom = []
               } else {
-                this.$Message.warning('操作失败', res)
+                this.$Message.warning(this.$t('message.failedOperation'), res)
               }
               this.getReplayGroupList()
               this.modalReplayGroup = false
@@ -817,7 +816,7 @@ export default {
               this.modalReplayGroupEditingID = ''
             }).catch(err => {
               console.error('操作异常', err)
-              this.$Message.error('操作异常')
+              this.$Message.error(this.$t('message.errorOperation'))
               this.modalReplayGroup = false
               this.modalReplayGroupLoading = false
               this.modalReplayGroupEditing = false
@@ -858,10 +857,10 @@ export default {
     tapAddReplayComDel(item) {
       if(item && item.row){
 
-          if (!confirm('确定执行删除吗？')) return;
+          if (!confirm(this.$t('message.confirmDelete'))) return;
       }else if(!this.replayCom.length) {
           this.$Notice.warning({
-              title: "请选择操作的数据",
+              title: this.$t('message.pleaseSelectData'),
           });
           return;
       }
@@ -899,22 +898,22 @@ export default {
         .then(res => {
           if (res.data.code === 200) {
             this.replayCom = [];
-            this.$Message.success('删除模板成功')
+            this.$Message.success(this.$t('message.delModelSuccess'))
           } else {
-            this.$Message.warning('删除模板失败', res)
+            this.$Message.warning(this.$t('message.delModelFail'), res)
           }
           this.getReplayComList()
         })
         .catch(err => {
-          this.$Message.error('删除模板异常')
+          this.$Message.error(this.$t('message.delModelError'))
         })
     },
     tapAddReplayGroupDel(item) {
       if(item){
-          if (!confirm('确定执行删除吗？')) return;
+          if (!confirm(this.$t('message.confirmDelete'))) return;
       }else if(!this.replayGroupCom.length){
           this.$Notice.warning({
-              title: "请选择操作的数据",
+              title: this.$t('message.pleaseSelectData'),
           });
           return;
       }
@@ -952,15 +951,14 @@ export default {
         .then(res => {
           if (res.data.code === 200) {
               this.replayGroupCom = []
-            this.$Message.success('删除模块组成功')
+            this.$Message.success(this.$t('message.delModelGroupSuccess'))
           } else {
-            this.$Message.warning('删除模块组失败', res)
+            this.$Message.warning(this.$t('message.delModelGroupFail'), res)
           }
           this.getReplayGroupList()
         })
         .catch(err => {
-          console.error('删除模块组异常', err)
-          this.$Message.error('删除模块组异常')
+          this.$Message.error(this.$t('message.delModelGroupError'))
         })
     },
     tapChoose(val) {
@@ -981,7 +979,7 @@ export default {
         })
       } else {
         if (this.likePageInput === '' && this.likeModelVal === 'postPage') {
-          this.$Message.warning('请输入主页关键词')
+          this.$Message.warning(this.$t('message.pleaseInputHomepageKey'))
         } else {
           let localstroage = window.localStorage
           let imei = this.checkImeiOnline()
@@ -1055,15 +1053,15 @@ export default {
             })
 
             this.changeBtnStatus()
-            window.sessionStorage.setItem('taskNow', '点赞')
+            window.sessionStorage.setItem('taskNow', this.$t("message.upvote"))
 
             if (timeVal === 0) {
-              this.keepTask(mainId, batchId, this.typeNumber, '点赞', imei)
+              this.keepTask(mainId, batchId, this.typeNumber, this.$t("message.upvote"), imei)
             }
 
-            this.$Message.success('发布成功')
+            this.$Message.success(this.$t('message.postSuccess'))
           } else {
-            this.$Message.warning('发布失败')
+            this.$Message.warning(this.$t('message.postFail'))
           }
         }
       } //if tasknow
@@ -1081,7 +1079,7 @@ export default {
               })
           } else {
               if (this.followPageInput === '' && this.followModelVal === 'postPage') {
-                  this.$Message.warning('请输入主页关键词')
+                  this.$Message.warning(this.$t('message.pleaseInputHomepageKey'))
               } else {
                   let localstroage = window.localStorage
                   let imei = this.checkImeiOnline()
@@ -1148,15 +1146,15 @@ export default {
                       })
 
                       this.changeBtnStatus()
-                      window.sessionStorage.setItem('taskNow', '关注')
+                      window.sessionStorage.setItem('taskNow', this.$t('message.follow'))
 
                       if (timeVal === 0) {
-                          this.keepTask(mainId, batchId, this.typeNumber, '关注', imei)
+                          this.keepTask(mainId, batchId, this.typeNumber, this.$t('message.follow'), imei)
                       }
 
-                      this.$Message.success('发布成功')
+                      this.$Message.success(this.$t('message.postSuccess'))
                   } else {
-                      this.$Message.warning('发布失败')
+                      this.$Message.warning(this.$t('message.postFail'))
                   }
               }
           } //if tasknow
@@ -1177,7 +1175,7 @@ export default {
           this.forwardPageInput === '' &&
           this.forwardModelVal === 'postPage'
         ) {
-          this.$Message.warning('请输入主页关键词')
+          this.$Message.warning(this.$t('message.pleaseInputHomepageKey'))
         } else {
           let localstroage = window.localStorage
           let imei = this.checkImeiOnline()
@@ -1248,15 +1246,15 @@ export default {
             })
 
             this.changeBtnStatus()
-            window.sessionStorage.setItem('taskNow', '转发')
+            window.sessionStorage.setItem('taskNow', this.$t('message.repost'))
 
             if (timeVal === 0) {
-              this.keepTask(mainId, batchId, this.typeNumber, '转发', imei)
+              this.keepTask(mainId, batchId, this.typeNumber, this.$t('message.repost'), imei)
             }
 
-            this.$Message.success('发布成功')
+            this.$Message.success(this.$t('message.postSuccess'))
           } else {
-            this.$Message.warning('发布失败')
+            this.$Message.warning(this.$t('message.postFail'))
           }
         }
       } //if tasknow
@@ -1282,7 +1280,7 @@ export default {
           this.replyPageInput === '' &&
           this.replyModelVal === 'postPage'
         ) {
-          this.$Message.warning('请输入主页关键词')
+          this.$Message.warning(this.$t('message.pleaseInputHomepageKey'))
         } else {
           let localstroage = window.localStorage
           let imei = this.checkImeiOnline()
@@ -1398,14 +1396,12 @@ export default {
           }
         }
       }
-      console.log('选择的在线设备是1：', imei)
+
       var imeiNew = []
       for (let i = 0, l = imei.length; i < l; i++) {
         for (let j = i + 1; j < l; j++) if (imei[i] === imei[j]) j = ++i
         imeiNew.push(imei[i])
       }
-
-      console.log('选择的在线设备是2：', imeiNew)
       return imeiNew
     },
 

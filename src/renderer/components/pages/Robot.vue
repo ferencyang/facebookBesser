@@ -255,17 +255,17 @@
                             <p>
                                 <ul>
                                     <li>
-                                        <Icon type="loop" style="padding-right:10px;"></Icon>刷新个人时间线</li>
+                                        <Icon type="loop" style="padding-right:10px;"></Icon>{{$t('message.renovatePersonalTimeLine')}}</li>
                                     <li>
-                                        <Icon type="loop" style="padding-right:10px;"></Icon>查看动态</li>
+                                        <Icon type="loop" style="padding-right:10px;"></Icon>{{$t('message.ViewDynamics')}}</li>
                                     <li>
-                                        <Icon type="loop" style="padding-right:10px;"></Icon>随机点赞</li>
+                                        <Icon type="loop" style="padding-right:10px;"></Icon>{{$t('message.randomUpvote')}}</li>
                                     <li>
-                                        <Icon type="loop" style="padding-right:10px;"></Icon>查看新闻</li>
+                                        <Icon type="loop" style="padding-right:10px;"></Icon>{{$t('message.viewNews')}}</li>
                                     <li>
-                                        <Icon type="loop" style="padding-right:10px;"></Icon>搜索</li>
+                                        <Icon type="loop" style="padding-right:10px;"></Icon>{{$t('message.search')}}</li>
                                     <li>
-                                        <Icon type="loop" style="padding-right:10px;"></Icon>在时间线上分享</li>
+                                        <Icon type="loop" style="padding-right:10px;"></Icon>{{$t('message.timeLineShare')}}</li>
                                 </ul>
                             </p>
                         </div>
@@ -273,12 +273,12 @@
 
                     </div>
                     <div class="example-header">
-                        <span>功能介绍</span>
+                        <span>{{$t('message.functionalIntroduction')}}</span>
                     </div>
                     <div class="example-desc">
                         <div>
                             <p>
-                                模仿正常人批量操作，刷动态、看新闻、搜索等。
+                                {{$t('message.functionalIntroductionContent')}}
                             </p>
                         </div>
                     </div>
@@ -300,7 +300,7 @@
 
                         </Col>
                         <!-- <Col span="3" offset="1">
-                        <Button type="ghost" @click="handleScheduleDel(index)">{{ $t("message.delect") }}</Button></Button>
+                        <Button type="ghost" @click="handleScheduleDel(index)">{{ $t("message.delete") }}</Button></Button>
                     </Col> -->
                     </Row>
                 </FormItem>
@@ -430,14 +430,13 @@ export default {
                     })
                         .then(res => {
                             if (res.data.code === 200) {
-                                this.$Message.success('清除任务列表成功')
+                                this.$Message.success(this.$t('message.delTaskListSuccess'))
                             } else {
-                                this.$Message.warning('清除任务列表异常', res)
+                                this.$Message.warning(this.$t('message.delTaskListError'), res)
                             }
                         })
                         .catch(err => {
-                            console.error('清除任务列表异常', err)
-                            this.$Message.error('清除任务列表异常')
+                            this.$Message.error(this.$t('message.delTaskListError'))
                         })
                 },
                 tapPage(val) {
@@ -487,7 +486,6 @@ export default {
 
                     this.$refs[nameVal].validate((valid) => {
                         if (valid) {
-                            console.log('选择的日期：', this.formSchedule.items)
 
                             let dateItems = this.formSchedule.items;
                             for (var i = 0; i < dateItems.length; i++) {
@@ -501,17 +499,12 @@ export default {
                                     let dateValNow = myDateNow.getTime();
                                     let dateValSce = myDateOrg.getTime();
 
-                                    console.log('选择的日期fa：', dateValSce)
-                                    console.log('选择的日期now：', dateValNow)
-
                                     let dateValCha = dateValSce - dateValNow;
-                                    console.log('选择的日期cha：', dateValCha)
                                     if (dateValCha > 0) {
-                                        console.log('选择的日期cha88：')
                                         let dateValChaTwo = parseInt(dateValCha / 1000);
                                         this.tapRobet(dateValNow, dateValChaTwo);
                                     } else {
-                                        this.$Message.warning('时间不能是过去的');
+                                        this.$Message.warning(this.$t('message.tipSelectDateWaring'));
                                     }
 
 
@@ -590,10 +583,8 @@ export default {
                             }
                         })
                         .then(response => {
-                            console.log('返回的数据: ', response.data)
                             if (response.data.code === 200) {
 
-                                console.log('返回的数据2: ', response.data.data)
                                 let listVal = response.data.data;
                                 this.robotTaskAll = listVal;
 
@@ -620,25 +611,25 @@ export default {
                                     let taskNameCreate = '';
                                     switch (listVal[i]) {
                                         case 82:
-                                            taskNameCreate = '刷新个人时间线';
+                                            taskNameCreate = this.$t('message.renovatePersonalTimeLine');
                                             break;
                                         case 83:
-                                            taskNameCreate = '查看动态';
+                                            taskNameCreate = this.$t('message.ViewDynamics');
                                             break;
                                         case 84:
-                                            taskNameCreate = '随机点赞';
+                                            taskNameCreate = this.$t('message.randomUpvote');
                                             break;
                                         case 85:
-                                            taskNameCreate = '查看新闻';
+                                            taskNameCreate = this.$t('message.viewNews');
                                             break;
                                         case 86:
-                                            taskNameCreate = '搜索';
+                                            taskNameCreate = this.$t('message.search');
                                             break;
                                         case 87:
-                                            taskNameCreate = '在时间线上分享';
+                                            taskNameCreate = this.$t('message.timeLineShare');
                                             break;
                                         default:
-                                            taskNameCreate = '任务';
+                                            taskNameCreate = this.$t('message.taskdetail');
                                     }
                                     if (timeVal === 0) {
 
@@ -655,7 +646,7 @@ export default {
                             } else {
 
                                 this.$Notice.warning({
-                                    title: this.$t("message.tipErrorettingAccountCancle"),
+                                    title: this.$t("message.tipErrorSettingAccountCancle"),
                                     desc: imei + response.data.msg
                                 });
 

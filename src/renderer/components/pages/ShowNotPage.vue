@@ -144,27 +144,27 @@ li {
             <div class="layout-nav">
                 <MenuItem name="1" disabled>
                     <Icon type="camera" size="50"></Icon>
-                    <p>发帖</p>
+                    <p>{{$t('message.post')}}</p>
                 </MenuItem>
                 <MenuItem name="2" disabled>
                     <Icon type="android-person-add" size="50"></Icon>
-                    <p>加友</p>
+                    <p>{{$t('message.addfriends')}}</p>
                 </MenuItem>
                 <MenuItem name="3" disabled>
                     <Icon type="chatbox-working" size="50"></Icon>
-                    <p>回复</p>
+                    <p>{{$t('message.replay')}}</p>
                 </MenuItem>
                 <MenuItem name="4" disabled>
                     <Icon type="ios-pulse-strong" size="50"></Icon>
-                    <p>养号</p>
+                    <p>{{$t('message.robot')}}</p>
                 </MenuItem>
                 <MenuItem name="5" disabled>
                     <Icon type="ios-list" size="50"></Icon>
-                    <p>任务</p>
+                    <p>{{$t('message.taskdetail')}}</p>
                 </MenuItem>
                 <MenuItem name="6" disabled>
                     <Icon type="ios-gear" size="50"></Icon>
-                    <p>设置</p>
+                    <p>{{$t('message.settings')}}</p>
                 </MenuItem>
             </div>
             <div style="position:absolute; right: 15px;top: 5px;color:#ffffff;font-size:16px;-webkit-app-region: no-drag;">
@@ -174,10 +174,10 @@ li {
                     </a>
                     <DropdownMenu slot="list">
                         <DropdownItem name="loop">
-                            <Icon type="loop" style="padding-right:5px;"></Icon>刷新页面
+                            <Icon type="loop" style="padding-right:5px;"></Icon>{{$t('message.loop')}}
                         </DropdownItem>
                         <DropdownItem divided name="aboutus">
-                            <Icon type="person-stalker" style="padding-right:5px;"></Icon>关于百森
+                            <Icon type="person-stalker" style="padding-right:5px;"></Icon>{{$t('message.aboutus')}}
                         </DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
@@ -201,11 +201,11 @@ li {
         <Col span="12" style="padding-left:50px;">
             <div class="dec-right">
                 <h1 class="dec-h1">404</h1>
-                <div class="dec-text">抱歉，您访问的页面不存在</div>
+                <div class="dec-text">{{$t('message.SorryNetworkError')}}</div>
                 <div class="dec-btn">
-                    <Button type="primary" @click="tapConnect">刷新页面</Button>
+                    <Button type="primary" @click="tapConnect">{{$t('message.loop')}}</Button>
                     <router-link to="/login">
-                        <Button type="ghost">重新登录</Button>
+                        <Button type="ghost">{{$t('message.reLogin')}}</Button>
                     </router-link>
                 </div>
             </div>
@@ -213,7 +213,7 @@ li {
     </Row>
 
     <div class="layout-copy">
-        Copyright &copy; 2017 - 2018 百森科技出品
+        {{$t('message.labelLogo')}}
     </div>
 </div>
 

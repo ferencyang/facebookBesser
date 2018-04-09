@@ -177,7 +177,7 @@ li {
               <Icon type="arrow-up-a" style="padding-right:5px;"></Icon>{{ $t("message.update") }}
             </DropdownItem>
 
-             <!--<Dropdown placement="left-start">
+             <Dropdown placement="left-start">
               <DropdownItem divided name="setlang">
                 <Icon type="earth" style="padding-right:5px;"></Icon>{{langValName}}
               </DropdownItem>
@@ -186,7 +186,7 @@ li {
                 <DropdownItem :selected="langVal === 'TW'" name="TW">繁體中文</DropdownItem>
                 <DropdownItem :selected="langVal === 'EN'" name="EN">English</DropdownItem>
               </DropdownMenu>
-            </Dropdown>-->
+            </Dropdown>
             <DropdownItem divided name="aboutus">
               <Icon type="person-stalker" style="padding-right:5px;"></Icon>{{ $t("message.aboutus") }}
             </DropdownItem>
@@ -207,7 +207,7 @@ li {
   </div>
 
   <Row >
-    <Col id="leftMenu" span="6" style="padding-right:15px;overflow:auto;height:600px;">
+    <Col id="left" span="6" style="padding-right:15px;overflow:auto;height:600px;">
     <!-- left -->
     <!-- 账号组部分 -->
     <div style="margin-top:20px;margin-left:15px;margin-bottom:10px;">
@@ -257,8 +257,8 @@ li {
         </Checkbox>
       </div>
       <div style="text-align:center;margin-top:2px">
-        <Button v-if="expandMoreDevice" type="ghost" icon="chevron-down" size="small" @click="expandMoreDevice = false">展开更多</Button>
-        <Button v-else icon="chevron-up" type="ghost" size="small"  @click="expandMoreDevice = true">收起更多</Button>
+        <Button v-if="expandMoreDevice" type="ghost" icon="chevron-down" size="small" @click="expandMoreDevice = false">{{$t('message.tipUnfoldMore')}}</Button>
+        <Button v-else icon="chevron-up" type="ghost" size="small"  @click="expandMoreDevice = true">{{$t('message.tipFoldMore')}}</Button>
       </div>
     </CheckboxGroup>
 
@@ -276,7 +276,7 @@ li {
   <!-- model -->
   <Modal v-model="modalAddGroup" :title="$t('message.newGroup')" :ok-text="$t('message.confirm')" :cancel-text="$t('message.cancel')" @on-ok="tapAddGroupOk" @on-cancel="tapAddGroupCancel">
     <p style="text-align:center;">
-      <Transfer :data="dataTransfer" filterable :list-style="listStyle" :not-found-text="$t('message.newGroupNoneTip')" :target-keys="dataTransferKey" :operations="[$t('message.delect'), $t('message.add')]" :titles="[$t('message.myAccount'), $t('message.newGroupAccount')]"
+      <Transfer :data="dataTransfer" filterable :list-style="listStyle" :not-found-text="$t('message.newGroupNoneTip')" :target-keys="dataTransferKey" :operations="[$t('message.delete'), $t('message.add')]" :titles="[$t('message.myAccount'), $t('message.newGroupAccount')]"
         @on-change="tapTransfer"></Transfer>
     </p>
     <br />
@@ -289,7 +289,7 @@ li {
   <!-- model -->
   <Modal v-model="modalEditGroup" :title="$t('message.editGroup')" :ok-text="$t('message.confirm')" :cancel-text="$t('message.cancel')" @on-ok="tapAddGroupEdit" @on-cancel="tapAddGroupCancel">
     <p style="text-align:center;">
-      <Transfer :data="dataTransfer" filterable :list-style="listStyle" :target-keys="dataTransferKey" :operations="[$t('message.delect'), $t('message.add')]" :titles="[$t('message.myAccount'), $t('message.newGroupAccount')]" @on-change="tapTransfer"></Transfer>
+      <Transfer :data="dataTransfer" filterable :list-style="listStyle" :target-keys="dataTransferKey" :operations="[$t('message.delete'), $t('message.add')]" :titles="[$t('message.myAccount'), $t('message.newGroupAccount')]" @on-change="tapTransfer"></Transfer>
     </p>
     <br />
     <p style="text-align:center;">
@@ -302,8 +302,8 @@ li {
   <Modal v-model="modalOperate" :title="$t('message.manageOnlineAccount')" :ok-text="$t('message.confirm')" :cancel-text="$t('message.cancel')" @on-cancel="tapAddGroupCancel">
     <Table border height='400' :columns="columns4" :data="this.devicesListAllTable" @on-selection-change="getSelectionData" ></Table>
     <div slot="footer">
-      <Button @click="modalOperate = false">取消</Button>
-      <Button type="primary" :loading=false  @click="tapSwitchGroupEdit()">选中设备切换到下一账号</Button>
+      <Button @click="modalOperate = false">{{$t('message.cancel')}}</Button>
+      <Button type="primary" :loading=false  @click="tapSwitchGroupEdit()">{{$t('message.labelSwitchFBNextAccount')}}</Button>
     </div>
   </Modal>
   <!-- model end -->
@@ -316,13 +316,13 @@ li {
   </Modal>
   <!-- model end -->
   <!-- model -->
-  <Modal v-model="changeAccount" :title='"更改设备账号"' :ok-text='"确定"' :cancel-text="$t('message.cancel')" @on-ok="tapSwitchAccount" >
+  <Modal v-model="changeAccount" :title="$t('message.labelChangeFBAccount')" :ok-text="$t('message.confirm')" :cancel-text="$t('message.cancel')" @on-ok="tapSwitchAccount" >
     <Form ref="accountdate" :model="account" :rules="ruleValidate" :label-width="80">
-      <FormItem label="账号：" prop="name">
-        <Input v-model="account.name" placeholder="请输入账号..."></Input>
+      <FormItem :label="$t('message.account')" prop="name">
+        <Input v-model="account.name" :placeholder="$t('message.tipChangeAccountName')"></Input>
       </FormItem>
-      <FormItem label="密码：" prop="password">
-        <Input v-model="account.password" placeholder="请输入密码..." type="password"></Input>
+      <FormItem label="$t('message.password')" prop="password">
+        <Input v-model="account.password" :placeholder="$t('message.tipChangeAccountPW')" type="password"></Input>
       </FormItem>
     </Form>
   </Modal>
@@ -367,11 +367,11 @@ export default {
           align: 'center'
           },
           {
-              title: '在线设备',
+              title: this.$t('message.labelOnlineMobile'),
               key: 'imei'
           },
           {
-              title: '操作',
+              title: this.$t('message.labelOperate'),
               key: 'action',
               width: 150,
               align: 'center',
@@ -394,7 +394,7 @@ export default {
                                   }
                               }
                           },
-                          "修改设备登录账号"
+                          this.$t('message.labelChangeOnlineMobileFB')
                       )
                   ])
               }
@@ -410,10 +410,10 @@ export default {
       },
       ruleValidate: {
           name: [
-              { required: true, message: '账号不能为空', trigger: 'blur' }
+              { required: true, message: this.$t('message.tipAccountRequired'), trigger: 'blur' }
           ],
           password: [
-              { required: true, message: '密码不能为空', trigger: 'blur' },
+              { required: true, message: this.$t('message.tipPasswordRequired'), trigger: 'blur' },
           ]
       },
       percent:0,
@@ -614,7 +614,7 @@ export default {
       if (versionNow !== null && versionNew !== null && versionNew > versionNow) {
         this.$Modal.confirm({
           title: this.$t("message.updateTitle"),
-          content: '<p>'+'当前版本:'+versionNow+' 最新版本:'+versionNew+'<p>'+'<p>' + this.$t("message.updateTextOk") + '</p>',
+          content: '<p>'+this.$t("message.labelVersionNow")+':'+versionNow+' '+this.$t("message.labelVersionNew")+':'+versionNew+'<p>'+'<p>' + this.$t("message.updateTextOk") + '</p>',
           okText: this.$t('message.confirm'),
           cancelText: this.$t('message.cancel'),
           onOk: () => {
@@ -628,7 +628,7 @@ export default {
         this.$Message.destroy();
         this.$Modal.info({
           title: this.$t("message.updateTitle"),
-          content: '<p>'+'您已是最新版本:'+versionNow+'<p>'+this.$t("message.updateTextNot"),
+          content: '<p>'+this.$t("message.labelVersionNewTip")+':'+versionNow+'<p>'+this.$t("message.updateTextNot"),
           okText: this.$t('message.confirm'),
           cancelText: this.$t('message.cancel'),
         });
@@ -645,8 +645,8 @@ export default {
           self.$Message.destroy();
           self.$Loading.error();
           self.$Modal.error({
-              title: '提示',
-              content: '下载失败，请重试'
+              title: self.$t('message.labelTips'),
+              content:self.$t('message.tipDownloadError')
           });
       });
       //
@@ -655,10 +655,10 @@ export default {
         self.downloading = false;
         self.$Loading.finish();
         self.$Modal.confirm({
-            title: '提示',
-            content: '<p>下载完成，确认安装更新？</p>',
+            title: self.$t('message.labelTips'),
+            content: '<p>'+ self.$t('message.tipDownloadSuccessTip')+'</p>',
             onOk: () => {
-                self.$Message.loading('即将重启');
+                self.$Message.loading(self.$t('message.tipRestart'));
                 ipcRenderer.send('surfbird:updateOk', true);
             },
             onCancel: () => {
@@ -674,7 +674,6 @@ export default {
         this.downloading = true
     },
     showDevice() {
-      // //console.log('开始显示设备:', this.devicesListAll);
       let deviceListAllOnline = [];
       let deviceListAllOffline = [];
       for (var i = 0; i < this.devicesListAll.length; i++) {
@@ -1251,31 +1250,31 @@ export default {
             this.sendNoticeValue(bodayGet.ret, bodayGet.imei, this.$t("message.reply"), bodayGet);
             break;
           case 66:
-            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, '点赞', bodayGet);
+            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, this.$t("message.upvote"), bodayGet);
             break;
           case 67:
-            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, '转发', bodayGet);
+            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, this.$t("message.repost"), bodayGet);
             break;
           case 81:
             this.sendNoticeValue(bodayGet.ret, bodayGet.imei, this.$t("message.robot"), bodayGet);
             break;
           case 82:
-            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, '刷新个人时间线', bodayGet);
+            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, this.$t("message.renovatePersonalTimeLine"), bodayGet);
             break;
           case 83:
-            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, '查看动态', bodayGet);
+            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, this.$t("message.ViewDynamics"), bodayGet);
             break;
           case 84:
-            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, '随机点赞', bodayGet);
+            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, this.$t("message.randomUpvote"), bodayGet);
             break;
           case 85:
-            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, '查看新闻', bodayGet);
+            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, this.$t("message.viewNews"), bodayGet);
             break;
           case 86:
-            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, '搜索', bodayGet);
+            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, this.$t("message.search"), bodayGet);
             break;
           case 87:
-            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, '在时间线上分享', bodayGet);
+            this.sendNoticeValue(bodayGet.ret, bodayGet.imei, this.$t("message.timeLineShare"), bodayGet);
             break;
           default:
             this.sendNoticeValue(bodayGet.ret, bodayGet.imei, '', bodayGet);
@@ -1297,13 +1296,13 @@ export default {
         if (status == 2000) {
 
           this.$Notice.success({
-            title: '定时任务发布成功'
+            title: this.$t('message.clockWorkPostSuccess')
           });
 
         } else if (status == 4301) {
 
           this.$Notice.warning({
-            title: '定时任务已达上限',
+            title: this.$t('message.clockWorkPostLimit'),
             duration: 0
           });
 
@@ -1433,63 +1432,63 @@ export default {
 
           } else {
 
-            taskStatusCreat = '任务进行中';
+            taskStatusCreat = this.$t('message.tipInfoTaskIng');
             endTimeCreat = '';
 
           }
 
           let taskNameCreate = '';
           switch (type) {
-            case 33:
-              taskNameCreate = '发帖';
+              case 33:
+              taskNameCreate = this.$t('message.post');
               break;
             case 49:
-              taskNameCreate = '搜索关键词加友';
+              taskNameCreate = this.$t('message.addFriendKey');
               break;
             case 50:
-              taskNameCreate = '搜索加友';
+              taskNameCreate = this.$t('message.friendTitleOne');
               break;
             case 51:
-              taskNameCreate = '推荐加友';
+              taskNameCreate = this.$t('message.friendTitleThree');
               break;
             case 52:
-              taskNameCreate = '添加好友的好友';
+              taskNameCreate = this.$t('message.addFriendTwo');
               break;
             case 53:
-              taskNameCreate = '通过好友请求';
+              taskNameCreate = this.$t('message.addFriendOK');
               break;
             case 54:
-              taskNameCreate = '导入好友';
+              taskNameCreate = this.$t('message.importingFriends');
               break;
             case 65:
-              taskNameCreate = '回复';
-              break;
-            case 65:
-              taskNameCreate = '点赞';
+              taskNameCreate = this.$t('message.replay');
               break;
             case 66:
-              taskNameCreate = '转发';
+              taskNameCreate = this.$t('message.upvote');
+                break;
+            case 67:
+              taskNameCreate = this.$t('message.repost');
               break;
             case 82:
-              taskNameCreate = '刷新个人时间线';
+              taskNameCreate = this.$t('message.renovatePersonalTimeLine');
               break;
             case 83:
-              taskNameCreate = '查看动态';
+              taskNameCreate = this.$t('message.ViewDynamics');
               break;
             case 84:
-              taskNameCreate = '随机点赞';
+              taskNameCreate = this.$t('message.randomUpvote');
               break;
             case 85:
-              taskNameCreate = '查看新闻';
+              taskNameCreate = this.$t('message.viewNews');
               break;
             case 86:
-              taskNameCreate = '搜索';
+              taskNameCreate = this.$t('message.search');
               break;
             case 87:
-              taskNameCreate = '在时间线上分享';
+              taskNameCreate = this.$t('message.timeLineShare');
               break;
             default:
-              taskNameCreate = '任务';
+              taskNameCreate = this.$t('message.taskdetail');
           }
 
 
@@ -1555,64 +1554,63 @@ export default {
           endTimeCreat = endTime;
 
         } else {
-
-          taskStatusCreat = '任务进行中';
+          taskStatusCreat = this.$t('message.tipInfoTaskIng');
           endTimeCreat = '';
 
         }
 
         let taskNameCreate = '';
         switch (type) {
-          case 33:
-            taskNameCreate = '发帖';
-            break;
-          case 49:
-            taskNameCreate = '搜索关键词加友';
-            break;
-          case 50:
-            taskNameCreate = '搜索加友';
-            break;
-          case 51:
-            taskNameCreate = '推荐加友';
-            break;
-          case 52:
-            taskNameCreate = '添加好友的好友';
-            break;
-          case 53:
-            taskNameCreate = '通过好友请求';
-            break;
-          case 54:
-            taskNameCreate = '导入好友';
-            break;
-          case 65:
-            taskNameCreate = '回复';
-            break;
-          case 66:
-            taskNameCreate = '点赞';
-            break;
-          case 67:
-            taskNameCreate = '转发';
-            break;
-          case 82:
-            taskNameCreate = '刷新个人时间线';
-            break;
-          case 83:
-            taskNameCreate = '查看动态';
-            break;
-          case 84:
-            taskNameCreate = '随机点赞';
-            break;
-          case 85:
-            taskNameCreate = '查看新闻';
-            break;
-          case 86:
-            taskNameCreate = '搜索';
-            break;
-          case 87:
-            taskNameCreate = '在时间线上分享';
-            break;
-          default:
-            taskNameCreate = '任务';
+            case 33:
+                taskNameCreate = this.$t('message.post');
+                break;
+            case 49:
+                taskNameCreate = this.$t('message.addFriendKey');
+                break;
+            case 50:
+                taskNameCreate = this.$t('message.friendTitleOne');
+                break;
+            case 51:
+                taskNameCreate = this.$t('message.friendTitleThree');
+                break;
+            case 52:
+                taskNameCreate = this.$t('message.addFriendTwo');
+                break;
+            case 53:
+                taskNameCreate = this.$t('message.addFriendOK');
+                break;
+            case 54:
+                taskNameCreate = this.$t('message.importingFriends');
+                break;
+            case 65:
+                taskNameCreate = this.$t('message.replay');
+                break;
+            case 66:
+                taskNameCreate = this.$t('message.upvote');
+                break;
+            case 67:
+                taskNameCreate = this.$t('message.repost');
+                break;
+            case 82:
+                taskNameCreate = this.$t('message.renovatePersonalTimeLine');
+                break;
+            case 83:
+                taskNameCreate = this.$t('message.ViewDynamics');
+                break;
+            case 84:
+                taskNameCreate = this.$t('message.randomUpvote');
+                break;
+            case 85:
+                taskNameCreate = this.$t('message.viewNews');
+                break;
+            case 86:
+                taskNameCreate = this.$t('message.search');
+                break;
+            case 87:
+                taskNameCreate = this.$t('message.timeLineShare');
+                break;
+            default:
+                taskNameCreate = this.$t('message.taskdetail');
         }
 
 
@@ -1761,7 +1759,7 @@ export default {
 
           } else {
 
-            taskStatusCreat = '任务进行中';
+            taskStatusCreat = this.$t('message.tipInfoTaskIng');
             endTimeCreat = '';
 
           }
@@ -1769,25 +1767,25 @@ export default {
           let taskNameCreate = '';
           switch (type) {
             case 82:
-              taskNameCreate = '刷新个人时间线';
-              break;
+                taskNameCreate = this.$t('message.renovatePersonalTimeLine');
+                break;
             case 83:
-              taskNameCreate = '查看动态';
-              break;
+                taskNameCreate = this.$t('message.ViewDynamics');
+                break;
             case 84:
-              taskNameCreate = '随机点赞';
-              break;
+                taskNameCreate = this.$t('message.randomUpvote');
+                break;
             case 85:
-              taskNameCreate = '查看新闻';
-              break;
+                taskNameCreate = this.$t('message.viewNews');
+                break;
             case 86:
-              taskNameCreate = '搜索';
-              break;
+                taskNameCreate = this.$t('message.search');
+                break;
             case 87:
-              taskNameCreate = '在时间线上分享';
-              break;
+                taskNameCreate = this.$t('message.timeLineShare');
+                break;
             default:
-              taskNameCreate = '任务';
+                taskNameCreate = this.$t('message.taskdetail');
           }
 
 
@@ -1855,34 +1853,33 @@ export default {
           endTimeCreat = endTime;
 
         } else {
-
-          taskStatusCreat = '任务进行中';
-          endTimeCreat = '';
+            taskStatusCreat = this.$t('message.tipInfoTaskIng');
+            endTimeCreat = '';
 
         }
 
         let taskNameCreate = '';
         switch (type) {
-          case 82:
-            taskNameCreate = '刷新个人时间线';
-            break;
-          case 83:
-            taskNameCreate = '查看动态';
-            break;
-          case 84:
-            taskNameCreate = '随机点赞';
-            break;
-          case 85:
-            taskNameCreate = '查看新闻';
-            break;
-          case 86:
-            taskNameCreate = '搜索';
-            break;
-          case 87:
-            taskNameCreate = '在时间线上分享';
-            break;
-          default:
-            taskNameCreate = '任务';
+            case 82:
+                taskNameCreate = this.$t('message.renovatePersonalTimeLine');
+                break;
+            case 83:
+                taskNameCreate = this.$t('message.ViewDynamics');
+                break;
+            case 84:
+                taskNameCreate = this.$t('message.randomUpvote');
+                break;
+            case 85:
+                taskNameCreate = this.$t('message.viewNews');
+                break;
+            case 86:
+                taskNameCreate = this.$t('message.search');
+                break;
+            case 87:
+                taskNameCreate = this.$t('message.timeLineShare');
+                break;
+            default:
+                taskNameCreate = this.$t('message.taskdetail');
         }
 
 
@@ -1992,7 +1989,7 @@ export default {
           let imei = [];
           imei = params ? params.imei:this.selectedData
           if(!imei.length){
-              this.$Message.error('请选择操作设备');
+              this.$Message.error(this.$t('message.tipPleaseSelectDevice'));
               return;
           }
           let token = window.localStorage.getItem("token");
@@ -2019,7 +2016,7 @@ export default {
               status: 0,
               body: bodyStr
           });
-          this.$Message.info('已提交切换账号请求');
+          this.$Message.info(this.$t('message.tipSubmitRequest'));
           this.modalOperate = false;
     },
       tapSwitchAccount(){
@@ -2052,7 +2049,7 @@ export default {
           status: 0,
           body: bodyStr
       });
-      this.$Message.info('已提交修改登录账号请求');
+      this.$Message.info(this.$t('message.tipSubmitRequest'));
       this.account = {
           name:"",
           password:""
@@ -2067,14 +2064,13 @@ export default {
   }, //methods
   sockets: {
     reconnect: function(val) {
-      //console.log('成功连接reconnect', val);
       window.sessionStorage.setItem('network', '200');
 
       this.getDevice();
 
     },
     connect_error: function(val) {
-      //console.log('连接失败了！！！！', val);
+
       window.sessionStorage.setItem('network', 'connect_error');
       this.devicesListAll = [];
       this.devicesGroupAll = [];
@@ -2138,13 +2134,13 @@ export default {
             if (value.status == 2000) {
 
               this.$Notice.success({
-                title: '定时任务发布成功'
+                title: this.$t('message.clockWorkPostSuccess')
               });
 
             } else if (value.status == 4301) {
 
               this.$Notice.warning({
-                title: '定时任务已达上限',
+                title: this.$t('message.clockWorkPostLimit'),
                 duration: 0
               });
 

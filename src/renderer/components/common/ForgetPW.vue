@@ -91,36 +91,36 @@
   <div class="header-form">
     <Form ref="formCustom" :model="formCustom" :rules="ruleCustom">
       <FormItem prop="mobile">
-        <Input icon="ios-email-outline" type="email" v-model.trim="formCustom.mobile" placeholder="我的邮箱" style="width: 200px;"></Input>
+        <Input icon="ios-email-outline" type="email" v-model.trim="formCustom.mobile" :placeholder="$t('message.tipMyEmail')" style="width: 200px;"></Input>
       </FormItem>
       <FormItem prop="smscode">
         <Row>
           <Col span="12" style="text-align:right;">
-          <Input type="text" v-model.trim="formCustom.smscode" :maxlength="10" placeholder="邮箱验证码" style="width: 100px;"></Input>
+          <Input type="text" v-model.trim="formCustom.smscode" :maxlength="10" :placeholder="$t('message.tipEmailIdentify')" style="width: 100px;"></Input>
           </Col>
           <Col span="12" style="text-align:left;padding-left:8px;">
-          <Button type="primary" v-if="checkSendCodeRight === '0'" disabled>发送验证码</Button>
-          <Button @click="tapSendCode" type="primary" v-else-if="checkSendCodeRight === '1'">发送验证码</Button>
-          <Button type="ghost" v-else-if="checkSendCodeRight === '2'">已发至邮箱</Button>
+          <Button type="primary" v-if="checkSendCodeRight === '0'" disabled>{{$t('message.labelSendIdentify')}}</Button>
+          <Button @click="tapSendCode" type="primary" v-else-if="checkSendCodeRight === '1'">{{$t('message.labelSendIdentify')}}</Button>
+          <Button type="ghost" v-else-if="checkSendCodeRight === '2'">{{$t('message.alreadySendEmail')}}</Button>
           </Col>
         </Row>
       </FormItem>
       <FormItem prop="password">
-        <Input type="password" icon="ios-locked-outline" v-model.trim="formCustom.password" placeholder="新密码，至少6位" style="width: 200px;"></Input>
+        <Input type="password" icon="ios-locked-outline" v-model.trim="formCustom.password" :placeholder="$t('message.tipResetNewPassword')" style="width: 200px;"></Input>
       </FormItem>
       <FormItem prop="rePassword">
-        <Input type="password" icon="ios-locked-outline" v-model.trim="formCustom.rePassword" placeholder="再次确认新密码" style="width: 200px;"></Input>
+        <Input type="password" icon="ios-locked-outline" v-model.trim="formCustom.rePassword" :placeholder="$t('message.tipConfirmNewPassword')" style="width: 200px;"></Input>
       </FormItem>
       <FormItem>
-        <Button type="primary" @click="handleSubmit('formCustom')" long style="width:200px;margin-top:5px;margin-bottom:15px;"> 确认重置密码 </Button>
+        <Button type="primary" @click="handleSubmit('formCustom')" long style="width:200px;margin-top:5px;margin-bottom:15px;"> {{$t('message.tipConfirmReset')}} </Button>
       </FormItem>
     </Form>
     <br />
-    <router-link to="/login">使用已有账号登录</router-link>
+    <router-link to="/login"> {{$t('message.labelOldUserLogin')}}</router-link>
   </div>
   <div class="footer">
     <div class="footer-dec">
-      Copyright © 2018 百森科技出品
+      {{$t('message.labelLogo')}}
     </div>
   </div>
   </Col>
@@ -237,7 +237,7 @@ export default {
 
         }, response => {
           // error callback
-          this.$Message.error('出现错误');
+          this.$Message.error(this.$t('message.tipWrong'));
         });
 
 
@@ -251,15 +251,15 @@ export default {
       let smscodeGet = this.formCustom.smscode;
 
       if (!mobileEnd) {
-        this.$Message.error('邮箱不能为空');
+        this.$Message.error(this.$t('message.tipEmailRequired'));
       } else if (!(/^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{1,20}$/.test(mobileEnd))) {
-        this.$Message.error('邮箱格式错误');
+        this.$Message.error(this.$t('message.tipEmailForm'));
       } else if (passwordGet.length < 6) {
-        this.$Message.error('至少6位数密码');
+        this.$Message.error(this.$t('message.tipEmailLength'));
       } else if (passwordGetCheck != passwordGet) {
-        this.$Message.error('两次密码不一致');
+        this.$Message.error(this.$t('message.tipPasswordDiff'));
       } else if (smscodeGet.length < 1) {
-        this.$Message.error('邮箱验证码不能为空');
+        this.$Message.error(this.$t('message.tipEmailIdentifyRequired'));
       } else {
 
         let Base64 = require('js-base64').Base64;
@@ -292,7 +292,7 @@ export default {
           .then(response => {
             console.log('返回的数据: ', response.data)
             if (response.data.code === 200) {
-              this.$Message.success('重置密码成功，去登录!');
+              this.$Message.success(this.$t('message.tipResetPasswordSuccess'));
               this.$router.push('/login');
             } else {
               this.$Message.error(response.data.msg);
@@ -300,7 +300,7 @@ export default {
 
           }, response => {
             // error callback
-            this.$Message.error('出现错误');
+            this.$Message.error(this.$t('message.tipWrong'));
           });
 
       }

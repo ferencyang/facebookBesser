@@ -135,16 +135,16 @@
         <Col span="12" style="padding-left:50px;">
             <div class="dec-right">
                 <h1 class="dec-h1">404</h1>
-                <div class="dec-text">抱歉，你访问的页面不存在</div>
+                <div class="dec-text">{{$t('message.labelSorry')}}</div>
                 <div class="dec-btn">
-                    <Button type="ghost" @click="tapConnect">访问官网</Button>
+                    <Button type="ghost" @click="tapConnect">{{$t('message.labelOpenHome')}}</Button>
                 </div>
             </div>
         </Col>
     </Row>
 
     <div class="layout-copy">
-        Copyright &copy; 2018 - 2019 百森科技出品
+       {{$t('message.labelLogo')}}
     </div>
 </div>
 
